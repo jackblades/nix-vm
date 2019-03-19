@@ -38,11 +38,11 @@ import XMonad.Prompt
 import XMonad.Prompt.ConfirmPrompt
 import XMonad.Prompt.Shell
 import XMonad.Util.EZConfig
+import XMonad.Util.SpawnOnce
 
 import qualified XMonad.StackSet as W
 --------------------------------------------------------------------------------
 main = do
-
   -- only spawn one instance [uses /bin/sh]
   spawn "pgrep yabar || yabar -c /home/ajit/.xmonad/yabar.config"
 
@@ -58,6 +58,10 @@ main = do
 rootConfig = desktopConfig
     { modMask    = mod4Mask -- Use the "Win" key for the mod key
     , focusedBorderColor = "#7FFFD4"
+    , startupHook = do
+        -- require login the _first_ time
+        spawnOnce "xautolock -locknow"
+        startupHook desktopConfig
                 -- placeHook (withGaps (25,0,25,0) (smart (0.2,0.2))) 
                 --    -- place floating windows
                 -- <+> 
@@ -69,8 +73,10 @@ rootConfig = desktopConfig
     }
       
 keyConfig = 
-      [ ("M-S-q",   confirmPrompt myXPConfig "exit" (io exitSuccess))
+      [ ("M-S-q",   shellPrompt myXPConfig)
+      -- , ("M-S-q",   confirmPrompt myXPConfig "exit" (io exitSuccess))
       
+      , ("M-l", spawn "xautolock -locknow")
       , ("M-f", sendMessage (Toggle "Full"))
       , ("M-m", banish UpperLeft)
       , ("M-z", sendMessage NextLayout)

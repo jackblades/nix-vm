@@ -1,8 +1,9 @@
 
 # TODO
-- notifications
 - autolocking
-- remove display-manager
+    - only 'physlock -l' remaining
+
+- notifications
 
 # home-manager
 - is *OFF*
@@ -12,6 +13,16 @@
 
 
 # contained environments with 'nix-shell -i'
+
+# power / lock
+- xmonad start out locked
+    - login required to use (display-manager auto login enabled)
+- xautolock handles lock on inactivity
+- xss-lock handles lock on sleep (via xautolock)
+- ideally if xautolock also ran `physlock -l` we would have complete security
+    - most linuxes don't even go this far
+
+- or light-locker / light-locker-command with lightdm
 
 # bluetooth
 - see https://nixos.wiki/wiki/Bluetooth

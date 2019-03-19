@@ -52,9 +52,15 @@ let lib = import <nixpkgs/lib>;
       };
 
       # screen lock
+      # physlock handles true terminals [ TODO handle better (no tty switching but no cli password)]
+      # xautolock handles inactivity [ xmonad.hs:services.xmonad.xautolock ]
+      # xss-lock handles system-wide sleep (suspend/hibernate)
       services.physlock.enable = true;
-      services.physlock.lockOn.hibernate = true;
-      services.physlock.lockOn.suspend = true;
+      services.physlock.lockOn.hibernate = false;
+      services.physlock.lockOn.suspend = false;
+
+      programs.xss-lock.enable = true;
+      programs.xss-lock.lockerCommand = "xautolock -locknow";
 
       # better ttys
       services.gpm.enable = false;
@@ -78,14 +84,14 @@ let lib = import <nixpkgs/lib>;
         htop
         icdiff  # see csdiff in fish-config/bin, and diff-so-fancy in the gitAndTools package
         manpages
-        moreutils  # TODO
+        moreutils  # WARN
         most
         multitail
         ncdu
         nix
-        pciutils  # TODO
+        pciutils  # WARN
         parallel
-        pmutils  # TODO
+        # pmutils  # systemctl suspend/hibernate/whatever
         python2
         python3
         python36Packages.pygments
@@ -94,7 +100,7 @@ let lib = import <nixpkgs/lib>;
         speedtest-cli
         sudo
         tree
-        utillinux  # TODO
+        utillinux  # WARN
         which
         wget
 
@@ -108,12 +114,13 @@ let lib = import <nixpkgs/lib>;
         vscode
         override-packages.wpsoffice
         
-        bashmount  # TODO
+        bashmount  # WARN
         brightnessctl
         override-packages.lxapp
         feh
-        gotty  # TODO
-        rofi  # TODO
+        gotty  # WARN
+        i3lock-fancy
+        rofi  # WARN
         xtitle
         xorg.xprop
         yabar-unstable

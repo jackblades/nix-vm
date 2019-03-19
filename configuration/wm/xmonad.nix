@@ -24,7 +24,16 @@ let lib = import <nixpkgs/lib>;
         # key repeat configs
         autoRepeatDelay = 200;
         autoRepeatInterval = 25;
-        
+
+        # TODO notifications, power management
+        xautolock.enable = true;
+        xautolock.time = 1;
+        xautolock.locker = "${pkgs.i3lock-fancy}/bin/i3lock-fancy";  # TODO run physlock
+        xautolock.nowlocker = "${pkgs.i3lock-fancy}/bin/i3lock-fancy";
+        xautolock.killer = "${pkgs.systemd}/bin/systemctl suspend";
+        xautolock.killtime = 20;
+        xautolock.extraOptions = [ "-detectsleep" ];
+
         displayManager = {
           # lightdm.greeters.gtk.enable = true;
           lightdm.background = "/assets/lockscreen";  # TODO WARN global state
@@ -38,10 +47,10 @@ let lib = import <nixpkgs/lib>;
             indicators = ~clock;~language;~spacer;~session;~power;
           '';
 
-          auto.enable = false;
+          auto.enable = true;
           auto.user = "ajit";
           
-          sddm.enable = true;
+          sddm.enable = false;
           sddm.theme = "/assets/deepin";  # TODO WARN global state
           # sddm.theme = "/assets/elegant-sddm/Elegant/";
           # ${FacesDir}/<username>.face.icon is the user avatar
