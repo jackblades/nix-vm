@@ -14,7 +14,7 @@ let args = { config = config; pkgs = pkgs; };
     installConfig = {
       imports =
         [ # Include the results of the hardware scan.
-        ./configuration/hardware-configuration.nix
+        ./hardware-configuration.nix
         ];  
     } // baseConfig;
 

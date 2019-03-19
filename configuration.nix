@@ -18,7 +18,7 @@ let lib = import <nixpkgs/lib>;
     installConfig = {
       imports =
         [ # Include the results of the hardware scan.
-        ./configuration/hardware-configuration.nix
+        ./hardware-configuration.nix
         "${home-manager}/nixos"
         ];  
     } // baseConfig;
