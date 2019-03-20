@@ -68,12 +68,4 @@
     which
     wget
   ];
-  
-  # TODO [position] global env vars
-  environment.sessionVariables = {
-    NIXPKGS_ALLOW_UNFREE = [ "1" ];
-    GTK_DATA_PREFIX = [
-      "${config.system.path}"
-    ];
-  };
 }

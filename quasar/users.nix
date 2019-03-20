@@ -17,6 +17,23 @@ in {
     quasar.fish.enable = true;
     quasar.xmonad.enable = true;
 
+    users.extraUsers.ajit = {
+      name = "ajit";
+      description = "Ajit Singh";    
+      isNormalUser = true;
+
+      uid = 1000;
+      group = "users";
+      home = "/home/ajit";
+
+      shell = "${pkgs.fish}/bin/fish";
+      createHome = true;
+      extraGroups = [ "wheel" "disk" "networkmanager" "sound" "pulse" "audio" "mlocate" ];
+
+      openssh.authorizedKeys.keys = [ "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDoEMEdWQpZe2ZK48JFFGUb4sSU/cLrUZjr6RuX3XMlU9BIeJ9FCNzTZVmfK3Rwy9x/mfmS/MngTE/DP0JmP25sZdETx8QFWlwkC6lyuydFIKk93chz8ZmXHlKR7NCjgGru8PvxMX1RWnD6+hcKqqpAijoeCO0PchJjVUKOjcz9UGJLaqDzGBV8KmGH2wVA1KRHPUw7OxHasckY1frpwO8ENfHjSu1TiEFDKGwlkOc7LOBxj0LSbzka5S9Wdij67xCTQUmp2S/lWrS6yogX4TPTyZIElUReAe4tkmujwMOmlq5cwT1kx62whMf1WnfGq0yiH7Ch95C/XIe0PgjZXbL3 ajit@ajit-Latitude-E7240" ];
+    };
+
+    # installed applications
     environment.systemPackages = with pkgs; [
       speedtest-cli
 
@@ -34,22 +51,6 @@ in {
       arc-theme
       paper-icon-theme
     ];
-
-    users.extraUsers.ajit = {
-      name = "ajit";
-      description = "Ajit Singh";    
-      isNormalUser = true;
-
-      uid = 1000;
-      group = "users";
-      home = "/home/ajit";
-
-      shell = "${pkgs.fish}/bin/fish";
-      createHome = true;
-      extraGroups = [ "wheel" "disk" "networkmanager" "sound" "pulse" "audio" "mlocate" ];
-
-      openssh.authorizedKeys.keys = [ "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDoEMEdWQpZe2ZK48JFFGUb4sSU/cLrUZjr6RuX3XMlU9BIeJ9FCNzTZVmfK3Rwy9x/mfmS/MngTE/DP0JmP25sZdETx8QFWlwkC6lyuydFIKk93chz8ZmXHlKR7NCjgGru8PvxMX1RWnD6+hcKqqpAijoeCO0PchJjVUKOjcz9UGJLaqDzGBV8KmGH2wVA1KRHPUw7OxHasckY1frpwO8ENfHjSu1TiEFDKGwlkOc7LOBxj0LSbzka5S9Wdij67xCTQUmp2S/lWrS6yogX4TPTyZIElUReAe4tkmujwMOmlq5cwT1kx62whMf1WnfGq0yiH7Ch95C/XIe0PgjZXbL3 ajit@ajit-Latitude-E7240" ];
-    };
 
     # user services
     services.flatpak.enable = true;

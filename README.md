@@ -5,6 +5,10 @@
 
 - notifications
 
+- constants (username, hostname, etc)
+- home-manager
+- extra assets (lightdm-lockscreen, etc)
+
 # home-manager
 - is *OFF*
 - toggle on if fresh install (in machine.nix)

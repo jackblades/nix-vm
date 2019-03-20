@@ -103,6 +103,7 @@ in {
       shellInit = ''
         # set default editor
         set -x EDITOR nvim
+        set -x GIT_EDITOR nvim
         set -x VISUAL code
 
         # generate the nixpkgs (maybe lock this file afterwards)

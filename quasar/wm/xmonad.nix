@@ -1,6 +1,15 @@
 { lib, pkgs, config, ...}:
 with lib;
 let cfg = config.quasar.xmonad;
+    
+    lxapp = pkgs.lxappearance.overrideAttrs (old: rec {
+      name = "lxappearance-0.6.2";
+      src = pkgs.fetchurl {
+        url = "mirror://sourceforge/project/lxde/LXAppearance/${name}.tar.xz";
+        sha256 = "07r0xbi6504zjnbpan7zrn7gi4j0kbsqqfpj8v2x94gr05p16qj4";
+      };
+    });
+
 in {
   imports = [
     ./xautolock.nix
@@ -13,11 +22,25 @@ in {
 
   config = mkIf cfg.enable {
     quasar.xautolock.enable = true;
+    # quasar.lightlock.enable = true;
+
+    environment.systemPackages = with pkgs; [
+      bashmount  # WARN
+      brightnessctl
+      lxapp
+      feh
+      gotty  # WARN
+      rofi  # WARN
+      xtitle
+      xorg.xprop
+      yabar-unstable
+    ];
 
     services.compton = {
       enable = true;
       shadow = true;
       shadowExclude = [ "class_g = '.terminator-wrapped'" ];
+      fade = true;
       inactiveOpacity = "0.8";
       # opacityRules = [
       #   "95:class_g = 'yabar'"
