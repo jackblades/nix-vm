@@ -29,11 +29,13 @@ import XMonad.Layout.BinarySpacePartition (emptyBSP)
 import XMonad.Layout.Grid
 import XMonad.Layout.Magnifier (magnifiercz)
 import XMonad.Layout.MouseResizableTile
+import XMonad.Layout.MultiToggle as MT
+import XMonad.Layout.MultiToggle.Instances as MTI
+-- import XMonad.Layout.ToggleLayouts as T (ToggleLayout(..), toggleLayouts)
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spacing -- (spacingRaw, Border)
 import XMonad.Layout.ResizableTile (ResizableTall(..))
 import XMonad.Layout.ThreeColumns
-import XMonad.Layout.ToggleLayouts (ToggleLayout(..), toggleLayouts)
 import XMonad.Prompt
 import XMonad.Prompt.ConfirmPrompt
 import XMonad.Prompt.Shell
@@ -44,12 +46,13 @@ import qualified XMonad.StackSet as W
 --------------------------------------------------------------------------------
 main = do
   -- only spawn one instance [uses /bin/sh]
-  spawn "pgrep yabar || yabar -c /home/ajit/.xmonad/yabar.config"
+  spawn "pgrep yabar || (while true; do yabar -c /home/ajit/.xmonad/yabar.config; done)"
 
+  spawn "pgrep terminator || terminator"
+  
   -- spawn "pgrep firefox || firefox"
   -- spawn "pgrep code || code"
   -- spawn "pgrep tilda || tilda --hidden"
-  spawn "pgrep terminator || terminator"
 
   let config = rootConfig `additionalKeysP` keyConfig
   -- ewmh is needed to get window info in bar
@@ -60,7 +63,7 @@ rootConfig = desktopConfig
     , focusedBorderColor = "#7FFFD4"
     , startupHook = do
         -- require login the _first_ time
-        spawnOnce "xautolock -locknow"
+        -- spawnOnce "xautolock -locknow"
         startupHook desktopConfig
                 -- placeHook (withGaps (25,0,25,0) (smart (0.2,0.2))) 
                 --    -- place floating windows
@@ -74,12 +77,15 @@ rootConfig = desktopConfig
       
 keyConfig = 
       [ ("M-S-q",   shellPrompt myXPConfig)
+      , ("M-w",   kill)
       -- , ("M-S-q",   confirmPrompt myXPConfig "exit" (io exitSuccess))
       
       , ("M-l", spawn "xautolock -locknow")
-      , ("M-f", sendMessage (Toggle "Full"))
       , ("M-m", banish UpperLeft)
       , ("M-z", sendMessage NextLayout)
+      -- , ("M-f", sendMessage (T.Toggle "Full"))
+      , ("M-f", sendMessage (MT.Toggle FULL))
+      , ("M-x", sendMessage (MT.Toggle MIRROR))
       
       , ("M-<Tab>", rotAllUp)
       , ("M-S-<Tab>", rotAllDown)
@@ -88,11 +94,7 @@ keyConfig =
       , ("M-S-<Return>", spawn "pgrep terminator || terminator")
 
       , ("M-<Space>", shellPrompt myXPConfig)
-      -- , ("M-w", promptSearch myXPConfig wikipedia)
-      -- , ("M-y", promptSearch myXPConfig youtube)
-      , ("M-g", promptSearch myXPConfig google)
-      -- , ("M-h", promptSearch myXPConfig hoogle)  -- wrong URL
-      , ("M-s", promptSearch myXPConfig multi)
+      , ("M-i", spawn "xcalib -i -a")
 
       -- TODO XMonad.Actions.WindowNavigation workspaces
       -- TODO XMonad.Actions.TreeSelect workspaces
@@ -104,7 +106,7 @@ keyConfig =
       , ("<XF86AudioPlay>", spawn "playerctl play-pause")    
       , ("<XF86AudioPrev>", spawn "playerctl previous")    
       , ("<XF86AudioNext>", spawn "playerctl next")    
-      , ("<XF86MonBrightnessUp>", spawn "brightnessctl s +7%")    
+      , ("<XF86MonBrightnessUp>", spawn "brightnessctl s +7%")
       , ("<XF86MonBrightnessDown>", spawn "brightnessctl s -7%")    
       ]
 
@@ -118,7 +120,9 @@ keyConfig =
 myLayouts = id
           -- remove borders from floating windows
           $ lessBorders OnlyScreenFloat
-          $ toggleLayouts (noBorders Full) 
+          -- http://hackage.haskell.org/package/xmonad-contrib-0.15/docs/XMonad-Layout-MultiToggle.html
+          $ mkToggle (NOBORDERS ?? FULL ?? EOT)
+          $ mkToggle (single MIRROR)
           $ spaced threeColumns ||| spaced mouseResizable ||| magnified
   where
     spaced = spacingRaw True (Border 2 2 2 2) True (Border 2 2 2 2) True

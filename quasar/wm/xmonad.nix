@@ -26,11 +26,11 @@ in {
 
     environment.systemPackages = with pkgs; [
       bashmount  # WARN
-      brightnessctl
       lxapp
       feh
       gotty  # WARN
       rofi  # WARN
+      xcalib
       xtitle
       xorg.xprop
       yabar-unstable
@@ -38,9 +38,11 @@ in {
 
     services.compton = {
       enable = true;
+      # backend = "glx";
       shadow = true;
       shadowExclude = [ "class_g = '.terminator-wrapped'" ];
       fade = true;
+      fadeExclude = [ "class_g = '.terminator-wrapped'" ];
       inactiveOpacity = "0.8";
       # opacityRules = [
       #   "95:class_g = 'yabar'"

@@ -2,12 +2,18 @@
 { lib, pkgs, config, ... }:
 with lib;
 let cfg = config.quasar.fish;
+    masenkoPrompt = import ./masenko-prompt.nix { pkgs = pkgs; };
 in {
+  imports = [
+    ./fish-nix-shell.nix
+  ];
+
   options.quasar.fish = {
     enable = mkEnableOption "quasar fish configuration";
   };
 
   config = lib.mkIf cfg.enable {
+    quasar.fish-nix-shell.enable = true;
 
     environment.systemPackages = with pkgs; [
       grc
@@ -30,13 +36,14 @@ in {
       ranger
       tmux
       terminator  
+
+      #
+      # masenkoPrompt
     ];
 
     programs.fish = {
       enable = true;
-      # loginShellInit = "";
-      # interactiveShellInit = "";
-      # promptInit = "";
+      promptInit = "for f in ${masenkoPrompt}/*; source $f; end";
       shellAliases = {
         fish-theme = "set -U | grep fish_color_";
 
@@ -92,8 +99,11 @@ in {
         nix-list-installed = "nix-env -q";
 
         nix-list-generations = "nix-env --list-generations";
-        nix-gc = "nix-collect-garbage --delete-old";
+        nix-gc = "nix-collect-garbage --delete-older-than 3d";
+        nix-gc1 = "nix-collect-garbage --delete-older-than 1d";
         nix-gcd = "nix-collect-garbage --delete-older-than";
+        nix-gc-force = "nix-collect-garbage -d";
+        nix-optimize-store = "nix-store --optimise -v";
         nix-rebuild-os = "sudo cp -r ~/nixos /etc; and sudo nixos-rebuild switch";
         nix-rollback-os = "sudo nixos-rebuild switch --rollback";
 
@@ -101,10 +111,18 @@ in {
         # qvm-start = "nohup VBoxHeadless --startvm nix > /tmp/quasar-vm &";
       };
       shellInit = ''
-        # set default editor
+        # set env
         set -x EDITOR nvim
         set -x GIT_EDITOR nvim
         set -x VISUAL code
+
+        function mkcd
+          test -d $argv[1]
+          or begin
+            mkdir -p $argv[1]
+            cd $argv[1]
+          end
+        end
 
         # generate the nixpkgs (maybe lock this file afterwards)
         test -f /tmp/packages.nix; 
@@ -145,11 +163,7 @@ in {
           set name (ls -1 /tmp/mounts | fzf --reverse)
           mount-rm $name
         end    
-      '';
-      
-      # vendor.completions.enable = "";
-      # vendor.config.enable = "";
-      # vendor.functions.enable = "";
+      '';      
     };
   };
 }

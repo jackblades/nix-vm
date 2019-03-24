@@ -3,18 +3,16 @@
 - autolocking
     - only 'physlock -l' remaining
 
-- notifications
-
 - constants (username, hostname, etc)
-- home-manager
-- extra assets (lightdm-lockscreen, etc)
+- xmonad
+- post-install script (for things like vscode extensions etc)
 
 # home-manager
-- is *OFF*
-- toggle on if fresh install (in machine.nix)
-- TODO probably should move to a dedicated home-manager setup (instead of configuration.nix)
-    - configuration.nix could still setup the home-manager and initial switch configuration
+- is *ON* [ quasar/home/manager.nix ]
 
+# notifications
+- using dunst
+- thankfully works with udiskie automount
 
 # contained environments with 'nix-shell -i'
 
@@ -27,6 +25,18 @@
     - most linuxes don't even go this far
 
 - or light-locker / light-locker-command with lightdm
+
+# wifi
+- 
+- connect to network
+    $ connmanctl
+    [connmanctl] enable wifi
+    [connmanctl] agent on
+    [connmanctl] scan wifi
+    [connmanctl] services
+    -- wait for network name and [long-identifier]
+    [connmanctl] services [long-identifier] 
+    [connmanctl] connect [long-identifier]
 
 # bluetooth
 - see https://nixos.wiki/wiki/Bluetooth
@@ -59,7 +69,21 @@
     - flatpak uninstall --unused
 
 
+# candidates
+  - services.ihaskell.enable = true;
+  - services.jupyter.enable = true;
+  - services.jupyter.password = "123ajit123";
 
+  - services.elasticsearch.enable = false;
+  - services.emby.enable = false;
+  - services.flexget.enable = false;
+  - services.grafana.enable = false;
+  - services.graphite.enable = false;
+  - services.hoogle.enable = false;
+  - services.hound.enable = false;
+  - services.hydra.enable = false;
+  - services.infinoted.enable = false;
+  - services.jira.enable = false;
 
 
 

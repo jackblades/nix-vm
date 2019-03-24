@@ -24,6 +24,8 @@ pkgs.wpsoffice.overrideAttrs (old: rec {
     cups
     xorg.libXrender
     lzma
+    corefonts
+    vistafonts
   ];
 
   installPhase = ''
@@ -48,6 +50,11 @@ pkgs.wpsoffice.overrideAttrs (old: rec {
       substituteInPlace $prefix/resource/applications/wps-office-$i.desktop \
         --replace /usr/bin $out/bin
     done
+
+    # [ CUSTOM ] rename the binaries
+    mv $out/bin/et $out/bin/wps-excel
+    mv $out/bin/wpp $out/bin/wps-powerpoint
+    mv $out/bin/wps $out/bin/wps-word
 
     # China fonts
     mkdir -p $prefix/resource/fonts/wps-office $out/etc/fonts/conf.d

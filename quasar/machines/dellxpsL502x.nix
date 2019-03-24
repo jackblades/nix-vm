@@ -34,6 +34,6 @@ in {
       # intel-media-driver # only available starting nixos-19.03 or the current nixos-unstable
     ];
     services.xserver.videoDrivers = [ "intel" "nvidia" ];
-    # hardware.bumblebee.enable = true;  # seems ok without it    
+    hardware.bumblebee.enable = true;  # enable nvidia when requested
   };
 }

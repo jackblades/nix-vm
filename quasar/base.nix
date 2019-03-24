@@ -12,6 +12,11 @@
   # show the manual on console 8
   # services.nixosManual.showManual = true;
   
+  imports = [
+      # ./iwd-nm.nix
+      ./overrides/iwd-nm-service.nix
+  ];
+
   ## ---
 
   # Use the GRUB 2 boot loader.
@@ -21,6 +26,9 @@
   boot.cleanTmpDir = true;
   # disable fsck (always fails and blocks at startup)
   boot.initrd.checkJournalingFS = false;   
+
+  # get newer kernel
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # timezone
   time.timeZone = "Asia/Calcutta";
@@ -33,12 +41,15 @@
   # networking
   networking.hostName = "quasar";
   # networking.networkmanager.enable = true;
-  # interfaceMonitor.enable = true; # watch for plugged in cable
-  networking.wireless.enable = false;
-  networking.useDHCP = false;
-  networking.wicd.enable = true;
-  # networking.firewall.enable = false;
-  # networking.enableIPv6 = false;
+  networking.enableIPv6 = false;
+  # networking.firewall.enable = false;  
+  networking.iwd-nm.enable = true;
+  networking.iwd-nm.wifi.backend = "iwd";
+  systemd.services."network-manager".requires = [
+    "network-pre.target"
+    "dbus.service"
+    "iwd.service"
+  ];
 
   # hardware
   powerManagement.enable = true;

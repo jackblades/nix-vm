@@ -18,14 +18,24 @@ in {
 
   config = mkIf cfg.enable {
     environment.etc.xmonadbg = {
-      user = "ajit";  # TODO
+      user = "ajit";
       group = "users";
       source = ../assets/xmonadbg.jpg;
     };
 
-    environment.systemPackages = with pkgs; [ i3lock-fancy ];
+    environment.etc.xautolock-locker = {
+      user = "ajit";
+      group = "users";
+      mode = "555";
+      text = ''
+        #!${pkgs.bash}/bin/bash
 
-    # TODO handle better (no tty switching but no cli password)
+        # TODO handle better (no tty switching but no cli password)
+        pgrep i3lock-fancy || (${pkgs.i3lock-fancy}/bin/i3lock-fancy --nofork)
+      '';
+    };
+
+    environment.systemPackages = with pkgs; [ i3lock-fancy ];
     
     # physlock handles true terminals 
     services.physlock.enable = true;
@@ -34,8 +44,7 @@ in {
 
     # xss-lock handles system-wide sleep (suspend/hibernate)
     programs.xss-lock.enable = true;
-    programs.xss-lock.lockerCommand 
-      = "${pkgs.i3lock-fancy}/bin/i3lock-fancy --nofork";
+    programs.xss-lock.lockerCommand = "/etc/xautolock-locker";
 
     # xautolock handles inactivity [ xmonad.hs:services.xmonad.xautolock ]
     services.xserver = {
@@ -44,14 +53,14 @@ in {
       displayManager.auto.user = "ajit";
       displayManager.sessionCommands = with pkgs; lib.mkAfter ''
         ${pkgs.feh}/bin/feh --bg-scale /etc/xmonadbg
-        ${pkgs.xautolock}/bin/xautolock -locknow
+        /etc/xautolock-locker
       '';
       
       # TODO notifications, power management
       xautolock.enable = true;
       xautolock.time = 5;
-      xautolock.locker = "${pkgs.i3lock-fancy}/bin/i3lock-fancy --nofork";  # TODO run physlock
-      xautolock.nowlocker = "${pkgs.i3lock-fancy}/bin/i3lock-fancy --nofork";
+      xautolock.locker = "/etc/xautolock-locker";
+      xautolock.nowlocker = "/etc/xautolock-locker";
       xautolock.killer = "${pkgs.systemd}/bin/systemctl suspend";
       xautolock.killtime = 20;
       xautolock.extraOptions = [ "-detectsleep" ];
