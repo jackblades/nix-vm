@@ -14,9 +14,9 @@ in {
     ];
 
     programs.fish.enable = true;
-    programs.fish.promptInit = ''
-      fish-nix-shell --info-right | source
-    '';
+    # programs.fish.promptInit = ''
+    #   fish-nix-shell --info-right | source
+    # '';
   };
 }
 

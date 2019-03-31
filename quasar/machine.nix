@@ -14,9 +14,13 @@ in {
 
   config = mkIf cfg.enable {
     nixpkgs.config.allowUnfree = true;
+    nixpkgs.config.oraclejdk.accept_license = true;
     
     quasar.users.enable = true;
     quasar.machines.dellxpsL502x.enable = true;
+
+    services.logind.lidSwitch = "ignore";
+    services.logind.lidSwitchDocked = "ignore";
 
     environment.sessionVariables = {
       NIXPKGS_ALLOW_UNFREE = [ "1" ];
@@ -44,6 +48,29 @@ in {
       interval = "hourly";
       # localuser = "ajit";  -- insecure [ uses su ]
     };
+
+    #
+    services.taskserver = {
+      enable = false;
+    };
+
+    # mpd service
+    services.mpd = {
+      enable = false;
+      user = "ajit";
+      group = "users";
+      musicDirectory = "/run/media/common/_archive/Music";
+      dataDir = "/run/media/common/quasar/mpd";
+      extraConfig = ''
+        audio_output {
+          type    "pulse"
+          name    "Local MPD"
+          # server  "127.0.0.1"
+          server  "localhost"
+        }
+      '';
+    };
+    services.ympd.enable = false;
 
     # fonts [ TODO move to home-manager? ]
     fonts = {

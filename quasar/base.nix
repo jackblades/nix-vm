@@ -27,6 +27,11 @@
   # disable fsck (always fails and blocks at startup)
   boot.initrd.checkJournalingFS = false;   
 
+  # bluetooth wifi interference issue
+  boot.extraModprobeConfig = ''
+    options iwlwifi bt_coex_active=0
+  '';
+
   # get newer kernel
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
@@ -42,7 +47,7 @@
   networking.hostName = "quasar";
   # networking.networkmanager.enable = true;
   networking.enableIPv6 = false;
-  # networking.firewall.enable = false;  
+  networking.firewall.enable = false;  
   networking.iwd-nm.enable = true;
   networking.iwd-nm.wifi.backend = "iwd";
   systemd.services."network-manager".requires = [

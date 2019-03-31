@@ -1,42 +1,18 @@
 
 # TODO
-- autolocking
-    - only 'physlock -l' remaining
-
 - constants (username, hostname, etc)
-- xmonad
 - post-install script (for things like vscode extensions etc)
 
-# home-manager
-- is *ON* [ quasar/home/manager.nix ]
+# java spplications
+- set -x _JAVA_AWT_WM_NONREPARENTING 1
+
+# firefox
+- if it doesn't connect to internet after suspend
+  - change network settings to 'no proxy'
 
 # notifications
 - using dunst
 - thankfully works with udiskie automount
-
-# contained environments with 'nix-shell -i'
-
-# power / lock
-- xmonad start out locked
-    - login required to use (display-manager auto login enabled)
-- xautolock handles lock on inactivity
-- xss-lock handles lock on sleep (via xautolock)
-- ideally if xautolock also ran `physlock -l` we would have complete security
-    - most linuxes don't even go this far
-
-- or light-locker / light-locker-command with lightdm
-
-# wifi
-- 
-- connect to network
-    $ connmanctl
-    [connmanctl] enable wifi
-    [connmanctl] agent on
-    [connmanctl] scan wifi
-    [connmanctl] services
-    -- wait for network name and [long-identifier]
-    [connmanctl] services [long-identifier] 
-    [connmanctl] connect [long-identifier]
 
 # bluetooth
 - see https://nixos.wiki/wiki/Bluetooth
@@ -50,12 +26,6 @@
     [bluetooth] # pair [hex-address]
     [bluetooth] # connect [hex-address]
 - also see `bluetooth-player`
-
-# XMonad conf
-- main key changed to "windows key" from "alt"
-- https://linuxaria.com/pills/how-to-have-a-transparent-terminal-as-wallpaper-that-displays-information
-    - xrootconsole can be used to tails a file in a window on your X11 root window
-    - eterm
 
 # Flatpak conf
 - post-activation

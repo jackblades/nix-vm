@@ -56,11 +56,11 @@ in {
       gtk = {
         enable = true;
         
-        theme.name = "Arc-Dark";
-        theme.package = pkgs.arc-theme;
+        theme.name = "Adapta-Eta";
+        theme.package = pkgs.adapta-gtk-theme;
         iconTheme.name = "Paper";
         iconTheme.package = pkgs.paper-icon-theme;
-        font.name = "Noto Mono for Powerline 10";
+        font.name = "Meslo LG Ms for Powerline 10";
         # font.package = pkgs.whatever;
 
         gtk2.extraConfig = ''
@@ -76,8 +76,13 @@ in {
         '';
       };
 
+      qt = {
+        enable = true;
+        useGtkTheme = false;
+      };
+
       # home.file.".xmonad/xmonad.hs".source = ./dotfiles/xmonad.hs;
-      home.file.".xmonad/yabar.config".source = ./dotfiles/yabar.config;
+      # home.file.".xmonad/yabar.config".source = ./dotfiles/yabar.config;
       home.file.".config/terminator/config".source = ./dotfiles/terminator.config;
       home.file.".config/nvim/init.vim".source = ./dotfiles/nvim-init.vim;
       home.file.".config/vlc/vlcrc".source = ./dotfiles/vlcrc;

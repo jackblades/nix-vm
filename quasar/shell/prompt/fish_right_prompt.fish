@@ -12,7 +12,8 @@ function fish_right_prompt
         printf (set_color $status_color)" $duration  "(set_color normal)
     end
 
-    printf (set_color -b $status_color)" "(set_color normal)
+    set -l nixshell (set -q IN_NIX_SHELL; and echo NIXSHELL (nix-shell-info))
+    printf (set_color f00)" $nixshell "(set_color -b $status_color)" "(set_color normal)
 end
 
 function humanize_duration -d "Humanize a time interval for display"

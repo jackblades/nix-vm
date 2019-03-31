@@ -8,6 +8,12 @@ in {
   };
 
   config = mkIf cfg.enable {
+    # sda3
+    fileSystems."/run/media/common" = {
+      device = "/dev/disk/by-uuid/450407545A0B2C50";
+      fsType = "ntfs";
+    };
+
     # sound support
     sound.enable = true;
     hardware.pulseaudio.enable = true;
@@ -20,6 +26,7 @@ in {
       Enable=Source,Sink,Media,Socket
     '';
     hardware.pulseaudio.package = pkgs.pulseaudioFull;
+    hardware.pulseaudio.support32Bit = true;
       # hardware.pulseaudio.extraModules = [ pkgs.pulseaudio-modules-bt ];
 
 

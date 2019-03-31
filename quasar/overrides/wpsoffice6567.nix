@@ -52,9 +52,9 @@ pkgs.wpsoffice.overrideAttrs (old: rec {
     done
 
     # [ CUSTOM ] rename the binaries
-    mv $out/bin/et $out/bin/wps-excel
-    mv $out/bin/wpp $out/bin/wps-powerpoint
-    mv $out/bin/wps $out/bin/wps-word
+    # mv $out/bin/et $out/bin/wps-excel
+    # mv $out/bin/wpp $out/bin/wps-powerpoint
+    # mv $out/bin/wps $out/bin/wps-word
 
     # China fonts
     mkdir -p $prefix/resource/fonts/wps-office $out/etc/fonts/conf.d

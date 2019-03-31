@@ -39,7 +39,8 @@ in {
     systemd.user.services.lightlocker = {
       description = "lightdm locker service";
       serviceConfig = {
-        Environment = [ "DISPLAY=:0" ];
+        # Environment = [ "DISPLAY=:0" ];
+        User = "ajit";
         ExecStart = "${pkgs.lightlocker}/bin/light-locker --no-late-locking --lock-on-suspend";
         Restart = "always";
       };
