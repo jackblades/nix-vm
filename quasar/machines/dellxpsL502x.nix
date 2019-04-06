@@ -42,5 +42,7 @@ in {
     ];
     services.xserver.videoDrivers = [ "intel" "nvidia" ];
     hardware.bumblebee.enable = true;  # enable nvidia when requested
+    hardware.bumblebee.group = "video";
+    hardware.bumblebee.connectDisplay = true;
   };
 }

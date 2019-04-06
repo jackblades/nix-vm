@@ -86,6 +86,9 @@ in {
       home.file.".config/terminator/config".source = ./dotfiles/terminator.config;
       home.file.".config/nvim/init.vim".source = ./dotfiles/nvim-init.vim;
       home.file.".config/vlc/vlcrc".source = ./dotfiles/vlcrc;
+      # home.file.".config/deadbeef/config".source = ./dotfiles/deadbeef/config;
+      # home.file.".config/deadbeef/dspconfig".source = ./dotfiles/deadbeef/dspconfig;
+      # home.file.".config/rofi/config".source = ./dotfiles/rofi/config;
       
     };
   };

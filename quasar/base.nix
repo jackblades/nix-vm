@@ -26,14 +26,16 @@
   boot.cleanTmpDir = true;
   # disable fsck (always fails and blocks at startup)
   boot.initrd.checkJournalingFS = false;   
+  boot.supportedFilesystems = [ "ntfs" ];   
 
   # bluetooth wifi interference issue
   boot.extraModprobeConfig = ''
     options iwlwifi bt_coex_active=0
   '';
+    # bbswitch load_state=-1 unload_state=1
 
   # get newer kernel
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # timezone
   time.timeZone = "Asia/Calcutta";

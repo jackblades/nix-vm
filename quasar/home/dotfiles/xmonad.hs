@@ -5,7 +5,7 @@ module Main (main) where
 --------------------------------------------------------------------------------
 -- XMonad.Actions.FloatSnap
 import qualified Data.Tree as Tree 
-import qualified Data.List as L (find, findIndex)
+import qualified Data.List as L (find, findIndex, tails)
 import qualified Data.Monoid as Monoid
 
 import System.Exit
@@ -40,6 +40,7 @@ import XMonad.Prompt.ConfirmPrompt
 import XMonad.Prompt.Shell
 import XMonad.Util.EZConfig
 import XMonad.Util.SpawnOnce
+import XMonad.Util.WindowProperties
 
 import qualified XMonad.StackSet as W
 --------------------------------------------------------------------------------
@@ -64,6 +65,8 @@ cmds =
   , ("sound", spawn "/etc/settings-sound")
   , ("colorinvert", spawn "xcalib -i -a")
   , ("layout", sendMessage NextLayout)
+  , ("lock", quasarLock)
+  , ("quasar", quasarSuspend)
   ]
 
 -- xmonad server
@@ -73,7 +76,7 @@ rootConfig = desktopConfig
     -- , startupHook = startupHook desktopConfig
     , manageHook = myManageHook 
                 <+> manageHook desktopConfig
-    , layoutHook = desktopLayoutModifiers $ myLayouts
+    , layoutHook = myLayouts
     , logHook    = dynamicLogString def >>= xmonadPropLog
     , handleEventHook = docksEventHook 
                       <+> fullscreenEventHook 
@@ -104,8 +107,9 @@ keyConfig =
       
       -- system commands
       , ("M-l", spawn "xautolock -locknow")
+
       -- use theme 'Paper by qball'
-      , ("M-<Space>", spawn "rofi -show drun -modi drun,window,ssh -show-icons -sidebar-mode # -lines 26 -theme-str '#window { height: 768; }' -location 1 ")
+      , ("M-<Space>", spawn "rofi -show drun -modi drun,window,ssh -show-icons -sidebar-mode")
       -- , ("M-<Space>", shellPrompt promptConfig)
       , ("M-<Right>", moveTo Next NonEmptyWS)
       , ("M-<Left>", moveTo Prev NonEmptyWS)
@@ -118,17 +122,20 @@ keyConfig =
       , ("<XF86MonBrightnessDown>", spawn "brightnessctl s -7%")    
       
       -- audio
-      , ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ +1.5%")
-      , ("<XF86AudioLowerVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@  -1.5%")
-      , ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle") 
+      , ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ +1.5%; /etc/settings-volume >> /tmp/volume")
+      , ("<XF86AudioLowerVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@  -1.5%; /etc/settings-volume >> /tmp/volume")
+      , ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle; /etc/settings-volume >> /tmp/volume") 
       , ("<XF86AudioPlay>", spawn "deadbeef --play-pause")    
+      , ("<XF86AudioStop>", spawn "deadbeef --toggle-pause")    
       , ("<XF86AudioPrev>", spawn "deadbeef --prev")    
       , ("<XF86AudioNext>", spawn "deadbeef --next")    
+      
       ]
 
 --------------------------------------------------------------------------------
 -- | Customize layouts.
 myLayouts = mkToggle (FULL ?? EOT)
+          $ avoidStruts  -- no overlap dock, except when fullscreen
           $ mkToggle (single MIRROR)
           $ spaced . magnified
           $ mouseResizable ||| threeColumns ||| Grid
@@ -167,13 +174,24 @@ myManageHook = composeOne
   , className =? "Wicd-client.py" 
       -?> doRectFloat (W.RationalRect 0.59 0.2 0.4 0.6)
   -- generic actions 
-  , isFullscreen         -?> doFullFloat
+  -- , isFullscreen         -?> doFullFloat
   , isDialog             -?> doCenterFloat
   -- Move transient windows to their parent:
   , transience
   ]
 
 -- util functions
+-- unused because xautolock wants lock app to not fork
+quasarLock = withFocused $ \w -> do
+  windowTitle <- runQuery title w
+  let yt = subIndex " - YouTube - " windowTitle
+  let vlc = subIndex " - VLC media player" windowTitle
+  if yt == Nothing && vlc == Nothing
+    then spawn "xautolock -locknow"
+    else spawn "(pacmd list-sink-inputs | grep 'state: RUNNING') || xautolock -locknow"
+
+quasarSuspend =
+  spawn "(pacmd list-sink-inputs | grep 'state: RUNNING') || systemctl suspend"
 
 findWindow :: (Window -> X Bool) -> X [Window]
 findWindow condition = do
@@ -182,10 +200,9 @@ findWindow condition = do
 
   
 -- className = ask >>= (\w -> liftX $ withDisplay $ \d -> fmap resClass $ io $ getClassHint d w)
--- this is a condition that can get className
-  -- d <- fmap display ask  -- MonadReader XConf X
-  -- getClassHint d w
+-- focusedHasProperty
 
+-- withFocused $ runQuery title
 
 -- server send command
 sendCommand = sendCommand' "XMONAD_COMMAND"
@@ -202,3 +219,7 @@ sendCommand' addr s = do
     sendEvent d rw False structureNotifyMask e
     sync d False
 
+
+--
+subIndex :: Eq a => [a] -> [a] -> Maybe Int
+subIndex substr str = L.findIndex (isPrefixOf substr) (L.tails str)

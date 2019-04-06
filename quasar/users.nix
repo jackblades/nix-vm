@@ -5,6 +5,9 @@ let cfg = config.quasar.users;
     wpsoffice6567 = import ./overrides/wpsoffice6567.nix { pkgs = pkgs; };
     vscodeCustom = import ./overrides/vscode.nix { pkgs = pkgs; };
     yEd319 = import ./overrides/yEd.nix pkgs;
+    qsteam = pkgs.steam.override {
+      withPrimus = true;
+      };
 in {
   imports = [
     ./shell/fish.nix
@@ -48,6 +51,9 @@ in {
       yEd319
 
       speedtest-cli
+
+      ntfs3g
+      gparted
 
       # dev stuff [ also see flathub ]
       # datagrip  

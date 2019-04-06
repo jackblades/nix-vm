@@ -15,6 +15,8 @@ in {
   config = mkIf cfg.enable {
     nixpkgs.config.allowUnfree = true;
     nixpkgs.config.oraclejdk.accept_license = true;
+    # nixpkgs.config.steam.primus = true;
+    # nixpkgs.config.steam.java = true;
     
     quasar.users.enable = true;
     quasar.machines.dellxpsL502x.enable = true;

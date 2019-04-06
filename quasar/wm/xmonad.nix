@@ -79,6 +79,28 @@ in {
             and ${pkgs.systemd}/bin/systemctl $choice
         '';
       };
+      settings-volume = {
+        user = "ajit";
+        group = "users";
+        mode = "555";
+        text = ''
+          #!/bin/sh
+
+          # Get the index of the selected sink:
+          getsink() {
+              ${pkgs.pulseaudio}/bin/pacmd list-sinks |
+                  ${pkgs.gawk}/bin/gawk '/index:/{i++} /* index:/{print i; exit}'
+          }
+
+          # Get the selected sink volume
+          getvolume() {
+              ${pkgs.pulseaudio}/bin/pacmd list-sinks |
+                  ${pkgs.gawk}/bin/gawk '/^\svolume:/{i++} i=='$(getsink)'{print $5; exit}'
+          }
+
+          ${pkgs.coreutils}/bin/echo  $(getvolume)
+        '';
+      };
     };
 
     environment.systemPackages = with pkgs; [
