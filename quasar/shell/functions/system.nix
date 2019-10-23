@@ -15,5 +15,9 @@ with lib;
   };
 
   shellInit = ''
+    function xmonad-reset
+      rm /home/ajit/.xmonad/xmonad-x86_64-linux
+      sudo systemctl restart display-manager
+    end
   '';    
 }

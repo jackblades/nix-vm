@@ -5,7 +5,7 @@
 { config, pkgs, ... }:
 
 { # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "18.09";  
+  system.stateVersion = "19.09";  
   
   # virtualisation.virtualbox.guest.enable = true;
   
@@ -20,9 +20,10 @@
   ## ---
 
   # Use the GRUB 2 boot loader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
-  boot.loader.grub.device = "/dev/sda";
+  # boot.loader.grub.enable = true;
+  # boot.loader.grub.version = 2;
+  boot.loader.grub.device = "/dev/sdb";
+  boot.loader.grub.useOSProber = true;
   boot.cleanTmpDir = true;
   # disable fsck (always fails and blocks at startup)
   boot.initrd.checkJournalingFS = false;   
@@ -35,8 +36,11 @@
     # bbswitch load_state=-1 unload_state=1
 
   # get newer kernel
-  # boot.kernelPackages = pkgs.linuxPackages_latest;
-
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelModules = [ "bbswitch" ];
+  boot.kernelParams = [ "acpi_rev_override=1" ];
+  hardware.nvidiaOptimus.disable = true;
+  
   # timezone
   time.timeZone = "Asia/Calcutta";
 
@@ -47,16 +51,16 @@
 
   # networking
   networking.hostName = "quasar";
-  # networking.networkmanager.enable = true;
+  networking.networkmanager.enable = true;
   networking.enableIPv6 = false;
   networking.firewall.enable = false;  
-  networking.iwd-nm.enable = true;
-  networking.iwd-nm.wifi.backend = "iwd";
-  systemd.services."network-manager".requires = [
-    "network-pre.target"
-    "dbus.service"
-    "iwd.service"
-  ];
+  # networking.iwd-nm.enable = true;
+  # networking.iwd-nm.wifi.backend = "iwd";
+  # systemd.services."network-manager".requires = [
+  #   "network-pre.target"
+  #   "dbus.service"
+  #   "iwd.service"
+  # ];
 
   # hardware
   powerManagement.enable = true;
@@ -71,6 +75,8 @@
   # default packages
   environment.systemPackages = with pkgs; [
     nix
+    hardinfo
+    # linuxPackages.bbswitch
     
     binutils
     gitAndTools.gitFull

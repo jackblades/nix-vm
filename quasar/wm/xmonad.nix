@@ -24,6 +24,10 @@ let cfg = config.quasar.xmonad;
         '';
     };
 
+    usermode = m: c: c // { user = "ajit"; group = "users"; mode = m; };
+    rx = "555";  # rx is permissions
+    rxfile = usermode rx;
+
 in {
   imports = [
     ./xautolock.nix
@@ -39,38 +43,19 @@ in {
     # quasar.lightlock.enable = true;
 
     environment.etc = {
-      settings-sound = {
-        user = "ajit";
-        group = "users";
-        mode = "555";
-        text = ''
-          #!/bin/sh
-          ${pkgs.procps}/bin/pkill -f blueman-manager || ${pkgs.blueman}/bin/blueman-manager &
-          ${pkgs.procps}/bin/pkill pavucontrol || ${pkgs.pavucontrol}/bin/pavucontrol &
-        '';
-      };
-      settings-calendar = {
-        user = "ajit";
-        group = "users";
-        mode = "555";
+      settings-calendar = rxfile {
         text = ''
           #!/bin/sh
           ${pkgs.procps}/bin/pgrep gnome-calendar || ${pkgs.gnome3.gnome-calendar}/bin/gnome-calendar &
         '';
       };
-      settings-network = {
-        user = "ajit";
-        group = "users";
-        mode = "555";
+      settings-network = rxfile {
         text = ''
           #!/bin/sh
           env PATH=${rofi-dmenu}/bin/:${pkgs.pinentry}/bin/:$PATH ${pkgs.networkmanager_dmenu}/bin/networkmanager_dmenu &
         '';
       };
-      settings-power = {
-        user = "ajit";
-        group = "users";
-        mode = "555";
+      settings-power = rxfile {
         text = ''
           #!${pkgs.fish}/bin/fish
           set power_options reboot suspend poweroff "" hibernate hybrid-sleep 
@@ -79,10 +64,14 @@ in {
             and ${pkgs.systemd}/bin/systemctl $choice
         '';
       };
-      settings-volume = {
-        user = "ajit";
-        group = "users";
-        mode = "555";
+      settings-sound = rxfile {
+        text = ''
+          #!/bin/sh
+          ${pkgs.procps}/bin/pkill -f blueman-manager || ${pkgs.blueman}/bin/blueman-manager &
+          ${pkgs.procps}/bin/pkill pavucontrol || (${pkgs.pavucontrol}/bin/pavucontrol && /etc/settings-volume >> /tmp/volume)&
+        '';
+      };
+      settings-volume = rxfile {
         text = ''
           #!/bin/sh
 
@@ -98,16 +87,56 @@ in {
                   ${pkgs.gawk}/bin/gawk '/^\svolume:/{i++} i=='$(getsink)'{print $5; exit}'
           }
 
-          ${pkgs.coreutils}/bin/echo  $(getvolume)
+          ${pkgs.coreutils}/bin/echo  $(getvolume)
         '';
+      };
+      settings-volume-mute = rxfile {
+        text = ''
+          #!/bin/sh
+          ${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
+          /etc/settings-volume >> /tmp/volume
+        '';
+      };
+      settings-volume-set = rxfile {
+        text = ''
+          #!/bin/sh
+          ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ "$@"
+          /etc/settings-volume >> /tmp/volume
+        '';
+      };
+      settings-brightness = rxfile {
+        text = ''
+          #!/bin/sh
+          ${pkgs.brightnessctl}/bin/brightnessctl s "$@"
+        '';
+      };
+      settings-toggle-redshift = rxfile {
+        text = ''
+          #!${pkgs.fish}/bin/fish
+          ${pkgs.systemd}/bin/systemctl --user status redshift
+          and ${pkgs.systemd}/bin/systemctl --user stop redshift
+          or ${pkgs.systemd}/bin/systemctl --user start redshift
+        '';
+      };
+      
+      # rofi config
+      "rofi/config" = rxfile {
+        source = ../home/dotfiles/rofi/config;
+      };
+      "rofi/nord.rasi" = rxfile {
+        source = ../home/dotfiles/rofi/nord.rasi;
       };
     };
 
+    # services.dbus.packages = with pkgs; [ gnome3.dconf ];
+
     environment.systemPackages = with pkgs; [
       bashmount  # WARN
+      blueman
       lxapp
       feh
       gotty  # WARN
+      xfce.thunar
       xcalib
       xtitle
       xorg.xprop
@@ -118,7 +147,7 @@ in {
       rofi-pass
       rofi-systemd
 
-      # gnome3.gnome-calendar
+      linuxPackages.bbswitch
     ];
 
     systemd.user.services.quasar-topbar = {
@@ -133,18 +162,29 @@ in {
     services.compton = {
       enable = true;
       shadow = true;
-      shadowExclude = [ "class_g = '.terminator-wrapped'" ];
+      shadowExclude = [ "class_g = '.terminator-wrapped'" "name ~= 'yabar$'" ];
       fade = true;
-      fadeExclude = [ "class_g = '.terminator-wrapped'" ];
+      fadeExclude = [ "class_g = '.terminator-wrapped'" "_NET_WM_NAME@:s = 'rofi'" ];
       inactiveOpacity = "0.8";
-      extraOptions = ''
-        focus-exclude: [ "name *?= 'i3lock'" ];
-      '';
+      settings = {
+        focus-exclude = [ "name *?= 'i3lock'" ];
+      };
     };
 
+    services.redshift = {
+      enable = true;
+    };
+    location.latitude = 12.9716;
+    location.longitude = 77.5946;
+
+    hardware.bumblebee.enable = true;
+    hardware.bumblebee.connectDisplay = true;
+    boot.blacklistedKernelModules = [ "nouveau" ];
+    boot.extraModprobeConfig = "options nouveau modeset=0";
     services.xserver = {
       enable = true;
       autorun = true;
+      videoDrivers = [ "intel" "nvidia" ];
       
       # trackpag config
       libinput.enable = true;

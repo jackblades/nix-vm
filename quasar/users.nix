@@ -12,6 +12,7 @@ in {
   imports = [
     ./shell/fish.nix
     ./wm/xmonad.nix
+    ./wm/gnome3.nix
     ./home/manager.nix
   ];
 
@@ -21,7 +22,8 @@ in {
 
   config = mkIf cfg.enable {
     quasar.fish.enable = true;
-    quasar.xmonad.enable = true;
+    quasar.xmonad.enable = false;
+    quasar.gnome3.enable = true;
     quasar.home.manager.enable = true;
 
     users.extraUsers.ajit = {
@@ -35,7 +37,7 @@ in {
 
       shell = "${pkgs.fish}/bin/fish";
       createHome = true;
-      extraGroups = [ "audio" "video" "disk" "wheel" "mlocate" "mpd" "docker" ];
+      extraGroups = [ "audio" "video" "disk" "wheel" "mlocate" "mpd" "docker" "libvirtd" ];
 
       openssh.authorizedKeys.keys = [ "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDoEMEdWQpZe2ZK48JFFGUb4sSU/cLrUZjr6RuX3XMlU9BIeJ9FCNzTZVmfK3Rwy9x/mfmS/MngTE/DP0JmP25sZdETx8QFWlwkC6lyuydFIKk93chz8ZmXHlKR7NCjgGru8PvxMX1RWnD6+hcKqqpAijoeCO0PchJjVUKOjcz9UGJLaqDzGBV8KmGH2wVA1KRHPUw7OxHasckY1frpwO8ENfHjSu1TiEFDKGwlkOc7LOBxj0LSbzka5S9Wdij67xCTQUmp2S/lWrS6yogX4TPTyZIElUReAe4tkmujwMOmlq5cwT1kx62whMf1WnfGq0yiH7Ch95C/XIe0PgjZXbL3 ajit@ajit-Latitude-E7240" ];
     };
@@ -48,7 +50,7 @@ in {
 
       vlc
       wpsoffice6567
-      yEd319
+      # yEd319
 
       speedtest-cli
 

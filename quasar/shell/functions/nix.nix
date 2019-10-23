@@ -3,7 +3,7 @@ with lib;
 {
   shellAliases = {
     nix-pkgs = "less /tmp/packages.nix";
-    nix-home-conf = "man home-configuration.nix | grep -v \\'^        \\' | grep -v \\'^[ \\r\\n\\t]*$\\' | less";
+    nix-home-conf = "man home-configuration.nix | grep -v '^        ' | grep -v '^[ \\r\\n\\t]*$' | less";
 
     nix-install = "nix-env -i";
     nix-uninstall = "nix-env -e";

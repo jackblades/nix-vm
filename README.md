@@ -9,6 +9,8 @@
 # firefox
 - if it doesn't connect to internet after suspend
   - change network settings to 'no proxy'
+- primevideo (DRM stuff)
+  - about:preferences > search DRM > enable
 
 # notifications
 - using dunst

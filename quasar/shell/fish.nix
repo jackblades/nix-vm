@@ -56,11 +56,13 @@ in {
       tree
 
       fzf
+      micro
       neovim
       tmux
       terminator  
 
       # IDE stuff
+      highlight  # for ranger highlighting
       rangerScrollPreview
 
       # afuse

@@ -22,14 +22,21 @@ with lib;
     fzfr = "fzf --ansi --reverse";
     fzfm = "fzf --ansi --reverse --multi";
 
+    # url processing
+    urldecode = "python -c \"import sys, urllib as ul, urlparse as up, json; print ul.unquote(sys.stdin.read());\"";
+    urldecode-queryjson = "python -c \"import sys, urllib as ul, urlparse as up, json; print json.dumps(up.parse_qs(ul.unquote(sys.stdin.read())));\"";
+
+    # applications
+    aria2t = "aria2c -x16 --file-allocation=none --seed-time=0";
+
     # process management
     psf = "grc --colour=on ps auxx | fzf --ansi --reverse";
     psfm = "grc --colour=on ps auxx | fzf --ansi --reverse --multi";
 
     # job management
     job-select = "jobs | fzf-tmux --ansi --reverse";
-    job-kill = "kill (jobs | fzf-tmux --ansi --reverse | awk \\'{print $2}\\')";
-    job-kill9 = "kill -9 (jobs | fzf-tmux --ansi --reverse | awk \\'{print $2}\\')";
+    job-kill = "kill (jobs | fzf-tmux --ansi --reverse | awk '{print $2}')";
+    job-kill9 = "kill -9 (jobs | fzf-tmux --ansi --reverse | awk '{print $2}')";
   };
   shellInit =
     ''
@@ -54,6 +61,23 @@ with lib;
       # view colorized source
       function sless
         pygmentize $argv[1] | less -R
+      end
+
+
+      # web search from cli
+      function stpb
+        ${pkgs.firefox}/bin/firefox --private-window "https://thepiratebay.org/search/$argv/0/99/0"
+      end
+      function sggl
+        ${pkgs.firefox}/bin/firefox "https://www.google.com/search?q=$argv"
+      end
+      function shkg
+        set argv (echo $argv | string replace -a " " "+")
+        ${pkgs.firefox}/bin/firefox "http://hackage.haskell.org/packages/search?terms=$argv"
+      end
+      function shgl
+        set argv (echo $argv | string replace -a " " "+")
+        ${pkgs.firefox}/bin/firefox "https://hoogle.haskell.org/?hoogle=$argv&scope=set%3Astackage"
       end
     '';
 }

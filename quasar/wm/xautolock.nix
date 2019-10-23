@@ -23,10 +23,10 @@ in {
         # TODO handle tty switching
 
         # if focused application is vlc or youtube
-        ${pkgs.xtitle}/bin/xtitle | ${pkgs.gnugrep}/bin/grep -qP "( - YouTube - | - VLC media player|aria2c )"
+        ${pkgs.xtitle}/bin/xtitle | ${pkgs.gnugrep}/bin/grep -qP "( - YouTube - | - VLC media player|aria2c |Prime Video: )"
         
         # and audio is playing
-        and ${pkgs.pulseaudio}/bin/pacmd list-sink-inputs | ${pkgs.gnugrep}/bin/grep 'state: RUNNING'
+        and ${pkgs.pulseaudio}/bin/pacmd list-sink-inputs | ${pkgs.gnugrep}/bin/grep -q 'state: RUNNING'
         
         # do not lock, otherwise
         or begin
@@ -41,7 +41,7 @@ in {
             --ignore-empty-password \
             --image=/tmp/bg \
             --clock \
-            --noinputtext="_|____" \
+            --noinputtext="////////" \
             --verifcolor=0892D0aa \
             --veriftext="********" \
             --wrongcolor=b92e34cc \
@@ -100,7 +100,7 @@ in {
         ${pkgs.feh}/bin/feh --randomize --bg-scale /etc/quasar/wall/* &
         ${pkgs.coreutils}/bin/cp `${pkgs.coreutils}/bin/shuf -n1 -e /etc/quasar/wall/*` /tmp/bg &
         (/etc/xautolock-locker && ${pkgs.terminator}/bin/terminator --hidden)&
-        /etc/settings-sound > /tmp/volume
+        /etc/settings-volume > /tmp/volume
       '';
       
       # TODO notifications, power management

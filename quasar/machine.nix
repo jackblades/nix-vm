@@ -4,7 +4,9 @@ with lib;
 let cfg = config.quasar.machine;
 in {
   imports = [
-    ./machines/dellxpsL502x.nix
+    # ./machines/dellxpsL502x.nix
+    ./machines/skyreach4mini.nix
+    ./machines/gpu-passthrough.nix
     ./users.nix
   ];
   
@@ -17,19 +19,28 @@ in {
     nixpkgs.config.oraclejdk.accept_license = true;
     # nixpkgs.config.steam.primus = true;
     # nixpkgs.config.steam.java = true;
+    nixpkgs.config.permittedInsecurePackages = [
+      "webkitgtk-2.4.11"
+    ];
     
     quasar.users.enable = true;
-    quasar.machines.dellxpsL502x.enable = true;
+    # quasar.gpu-passthrough.enable = true;
+    quasar.machines.skyreach4mini.enable = true;
 
     services.logind.lidSwitch = "ignore";
     services.logind.lidSwitchDocked = "ignore";
 
     environment.sessionVariables = {
-      NIXPKGS_ALLOW_UNFREE = [ "1" ];
-      # TODO is this necessary?
+      NIXPKGS_ALLOW_UNFREE = "1";
+
+      # path config for gtk apps
       GTK_DATA_PREFIX = [
         "${config.system.path}"
       ];
+
+      # wm thing java apps
+      _JAVA_AWT_WM_NONREPARENTING = "1";
+      _JAVA_OPTIONS = "-Dawt.useSystemAAFontSettings=lcd -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
     };
 
     # user services
@@ -39,8 +50,17 @@ in {
     hardware.brightnessctl.enable = true;  # add users to 'video' group
     services.autorandr.enable = true;    
 
-    services.flatpak.enable = true;
-    services.flatpak.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    services.aria2.enable = false;
+    services.aria2.downloadDir = "/home/ajit/aria2";
+    services.aria2.extraArguments = "--max-connection-per-server=16";
+    services.aria2.openPorts = true;
+    services.aria2.rpcListenPort = 6800;
+    # see https://aria2.github.io/manual/en/html/aria2c.html#rpc-auth
+    services.aria2.rpcSecret = "aria2rpc"; 
+    
+    # xdg.portal.enable = true;
+    # services.flatpak.enable = true;
+    # services.flatpak.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
     
     # system wide services
 
@@ -83,7 +103,7 @@ in {
         anonymousPro
         corefonts
         dejavu_fonts
-        font-droid
+        noto-fonts
         freefont_ttf
         google-fonts
         inconsolata
