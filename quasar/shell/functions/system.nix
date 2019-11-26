@@ -7,7 +7,7 @@ with lib;
 
     settings-net = "nmtui";
     settings-bt = "bluetoothctl";
-    settings-wall = "feh --bg-scale /etc/quasar/wall/(ls /etc/quasar/wall | fzf --reverse --prompt \"wallpaper > \")";
+    settings-wall = "feh --bg-scale /etc/nixos/quasar/assets/wall/(ls /etc/nixos/quasar/assets/wall | fzf --reverse --prompt \"wallpaper > \")";
 
     bt-stone-connect = "echo connect FC:58:FA:D4:FC:68 | bluetoothctl";
     bt-stone-disconnect = "echo disconnect | bluetoothctl";

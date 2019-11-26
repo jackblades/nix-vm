@@ -2,6 +2,9 @@
 
 module Main (main) where
 
+-- TODO dynamic workspaces
+-- TODO 
+
 ------------------------------------------------------------------------------
 -- XMonad.Actions.FloatSnap
 import qualified Data.Tree as Tree 
@@ -19,6 +22,7 @@ import XMonad.Actions.CycleWS
 import XMonad.Actions.RotSlaves
 import XMonad.Actions.Search
 import XMonad.Actions.Warp (banish, Corner(UpperLeft))
+import XMonad.Actions.WindowGo
 import XMonad.Config.Desktop
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops
@@ -40,6 +44,7 @@ import XMonad.Prompt
 import XMonad.Prompt.ConfirmPrompt
 import XMonad.Prompt.Shell
 import XMonad.Util.EZConfig
+import XMonad.Util.Paste
 import XMonad.Util.SpawnOnce
 import XMonad.Util.WindowProperties
 
@@ -51,7 +56,8 @@ import qualified XMonad.StackSet as W
 -- | xmonad server client cmds
 cmds :: [(String, X ())]
 cmds = 
-  [ ("calendar", spawn "/etc/settings-calendar")
+  [ ("apps", rofiApps)
+  , ("calendar", spawn "/etc/settings-calendar")
   , ("network", spawn "/etc/settings-network")
   , ("power", spawn "/etc/settings-power")
   , ("sound", spawn "/etc/settings-sound")
@@ -64,6 +70,8 @@ cmds =
   , ("win-next", rotAllUp)
   , ("win-prev", rotAllDown)
   ]
+
+rofiApps = spawn "/run/current-system/sw/bin/rofi -show drun -modi drun,window,ssh -show-icons -sidebar-mode -columns 3 -p apps -config /etc/rofi/config -theme /etc/rofi/nord.rasi"
 
 ------------------------------------------------------------------------------
 -- | setup client/server and args
@@ -87,7 +95,9 @@ rootConfig = desktopConfig
   , borderWidth = 0
   , focusedBorderColor = "#000000"
   -- xmonad startup
-  , startupHook = startupHook desktopConfig
+  , startupHook = do
+      -- spawnOnce "systemctl --user restart quasar-terminal"
+      startupHook desktopConfig
   , layoutHook = myLayouts
   -- on create window
   , manageHook = fullscreenManageHook
@@ -142,11 +152,33 @@ myManageHook = composeOne
       rectFloat x y w h = doRectFloat $ W.RationalRect x y w h
 
 ------------------------------------------------------------------------------
+ifTerminal t f = 
+  ifWindows (className =? ".terminator-wrapped") (\_ -> t) f
+
+ifNotTermSend k a = ifTerminal (sendKey noModMask k) a
+
 -- | Keybindings
 keyConfig = 
   [ ("M-S-q",   shellPrompt promptConfig)
   -- , ("M-S-q",   confirmPrompt promptConfig "exit" (io exitSuccess))
 
+  -- fast actions bound to f-keys
+  -- , ("<F1>",)   -- used by terminator
+  , ("<F2>", sendMessage NextLayout)
+  , ("<F3>", sendMessage Magnifier.Toggle) 
+  , ("<F4>", kill) 
+  , ("<F5>", rotAllUp) 
+  , ("<F6>", windows W.focusDown) 
+  , ("<F7>", shiftToPrev >> prevWS) 
+  , ("<F8>", shiftToNext >> nextWS) 
+  , ("<F9>", moveTo Next NonEmptyWS) 
+  , ("<F10>", moveTo Next EmptyWS) 
+  , ("<F11>", sendMessage (MT.Toggle FULL) >> raiseFocusedWindow >> sendKey noModMask xK_F11)
+  , ("<F12>", rofiApps)   
+
+  , ("<Print>", spawn "scrot window_%Y-%m-%d-%H-%M-%S.png -d 1-u -e 'mv $f /run/media/external/quasar/screenshot/'")   
+  
+  
   -- mouse actions
   , ("M-m", banish UpperLeft)
   
@@ -167,7 +199,7 @@ keyConfig =
   
   -- switch layouts
   , ("M-z", sendMessage NextLayout)
-  , ("M-f", sendMessage (MT.Toggle FULL) >> raiseFocusedWindow)
+  , ("M-f", sendMessage (MT.Toggle FULL) >> raiseFocusedWindow >> sendKey noModMask xK_F11)
   , ("M-x", sendMessage (MT.Toggle MIRROR))
   , ("M-a", sendMessage Magnifier.Toggle)
   
@@ -178,7 +210,7 @@ keyConfig =
 
   -- apps
   , ("M-e", spawn "thunar ~")
-  , ("M-S-e", spawn "thunar /run/media/common")
+  , ("M-S-e", spawn "thunar /run/media/external")
   
   -- system commands
   , ("M-l", spawn "xautolock -locknow")

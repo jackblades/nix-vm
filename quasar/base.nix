@@ -13,8 +13,7 @@
   # services.nixosManual.showManual = true;
   
   imports = [
-      # ./iwd-nm.nix
-      ./overrides/iwd-nm-service.nix
+      # ./overrides/iwd-nm-service.nix
   ];
 
   ## ---
@@ -25,21 +24,21 @@
   boot.loader.grub.device = "/dev/sdb";
   boot.loader.grub.useOSProber = true;
   boot.cleanTmpDir = true;
+  
   # disable fsck (always fails and blocks at startup)
   boot.initrd.checkJournalingFS = false;   
   boot.supportedFilesystems = [ "ntfs" ];   
 
   # bluetooth wifi interference issue
-  boot.extraModprobeConfig = ''
-    options iwlwifi bt_coex_active=0
-  '';
+  # boot.extraModprobeConfig = ''
+  #   options iwlwifi bt_coex_active=0
+  # '';
     # bbswitch load_state=-1 unload_state=1
 
   # get newer kernel
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelModules = [ "bbswitch" ];
-  boot.kernelParams = [ "acpi_rev_override=1" ];
-  hardware.nvidiaOptimus.disable = true;
+  # boot.kernelParams = [ "acpi_rev_override=1" ];
+  # hardware.nvidiaOptimus.disable = true;
   
   # timezone
   time.timeZone = "Asia/Calcutta";
@@ -75,7 +74,6 @@
   # default packages
   environment.systemPackages = with pkgs; [
     nix
-    hardinfo
     # linuxPackages.bbswitch
     
     binutils

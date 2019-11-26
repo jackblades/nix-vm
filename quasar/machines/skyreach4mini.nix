@@ -2,6 +2,11 @@
 { lib, config, pkgs, ... }:
 with lib;
 let cfg = config.quasar.machines.skyreach4mini;
+    fmount-uuid = uuid: fstype: { 
+      device = "/dev/disk/by-uuid/${uuid}"; 
+      fsType = fstype; 
+    };
+
 in {
   options.quasar.machines.skyreach4mini = {
     enable = mkEnableOption "quasar machine configuration for the skyreach 4 mini system";
@@ -9,14 +14,17 @@ in {
 
   config = mkIf cfg.enable {
     # sdc3
-    # fileSystems."/run/media/common" = {
-      # device = "/dev/disk/by-uuid/450407545A0B2C50";
-      # fsType = "ntfs";
-    # };
+    fileSystems."/run/media/external" = fmount-uuid "A0DEA515DEA4E4AE" "ntfs";
+    fileSystems."/run/media/common" = fmount-uuid "A4C2158AC215623A" "ntfs";
+    # fileSystems."/run/media/win10ltsc" = fmount-uuid "79416EEF4F0AE288" "ntfs"
+      
 
     # sound support
     sound.enable = true;
     hardware.pulseaudio.enable = true;
+    # hardware.pulseaudio.systemWide = true;
+    hardware.pulseaudio.tcp.enable = true;
+    hardware.pulseaudio.tcp.anonymousClients.allowedIpRanges = [ "127.0.0.1" ];
     
     # bluetooth support
     hardware.bluetooth.enable = true;
@@ -39,12 +47,6 @@ in {
     # opengl support
     hardware.opengl.enable = true;
     hardware.opengl.driSupport32Bit = true;
-    hardware.opengl.extraPackages = with pkgs; [
-      (vaapiIntel.override {
-        enableHybridCodec = true; })
-      vaapiVdpau
-      libvdpau-va-gl
-      # intel-media-driver # only available starting nixos-19.03 or the current nixos-unstable
-    ];
+    hardware.opengl.extraPackages = [ pkgs.intel-media-driver ];
   };
 }

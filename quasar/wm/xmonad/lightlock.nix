@@ -11,7 +11,7 @@ in {
     environment.etc.lightlockbg = {
       user = "lightdm";
       group = "lightdm";
-      source = ../assets/lightlockbg.jpg;
+      source = /etc/nixos/quasar/assets/lightlockbg.jpg;
     };
 
     services.xserver = {

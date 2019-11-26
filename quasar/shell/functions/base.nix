@@ -37,6 +37,7 @@ with lib;
     job-select = "jobs | fzf-tmux --ansi --reverse";
     job-kill = "kill (jobs | fzf-tmux --ansi --reverse | awk '{print $2}')";
     job-kill9 = "kill -9 (jobs | fzf-tmux --ansi --reverse | awk '{print $2}')";
+
   };
   shellInit =
     ''
@@ -61,6 +62,14 @@ with lib;
       # view colorized source
       function sless
         pygmentize $argv[1] | less -R
+      end
+
+
+      function queue-youtube
+        ${pkgs.coreutils}/bin/echo "$argv" >> /tmp/youtube-queue
+      end
+      function queue-torrent
+        ${pkgs.coreutils}/bin/echo "$argv" >> /tmp/torrent-queue
       end
 
 

@@ -11,7 +11,7 @@ in {
     environment.etc.quasar = {
       user = "ajit";
       group = "users";
-      source = ../assets;
+      source = /etc/nixos/quasar/assets;
     };
 
     environment.etc.xautolock-locker = {
@@ -31,10 +31,6 @@ in {
         # do not lock, otherwise
         or begin
 
-          # randomize bg from /etc/quasar/wall
-          ${pkgs.coreutils}/bin/cp (${pkgs.coreutils}/bin/shuf -n1 -e /etc/quasar/wall/*) /tmp/bg 
-          ${pkgs.coreutils}/bin/chmod 600 /tmp/bg
-
           # run if not already running
           pgrep i3lock-color
           or ${pkgs.i3lock-color}/bin/i3lock-color --nofork \
@@ -53,9 +49,6 @@ in {
             --bshlcolor=44000000 \
             --ringvercolor=252566aa \
             --bar-direction=1
-
-          # change wallpaper on lock, and locks once at startup
-          # (${pkgs.curl}/bin/curl -L "https://source.unsplash.com/random/1366x768" > /tmp/bg2 && ${pkgs.coreutils}/bin/mv /tmp/bg2 /tmp/bg && ${pkgs.feh}/bin/feh --bg-scale /tmp/bg)&
 
           # lower left ring indicator
           # pkill -u $USER -USR1 dunst
@@ -96,12 +89,6 @@ in {
       # use the session lock to login
       displayManager.auto.enable = true;
       displayManager.auto.user = "ajit";
-      displayManager.sessionCommands = with pkgs; lib.mkAfter ''
-        ${pkgs.feh}/bin/feh --randomize --bg-scale /etc/quasar/wall/* &
-        ${pkgs.coreutils}/bin/cp `${pkgs.coreutils}/bin/shuf -n1 -e /etc/quasar/wall/*` /tmp/bg &
-        (/etc/xautolock-locker && ${pkgs.terminator}/bin/terminator --hidden)&
-        /etc/settings-volume > /tmp/volume
-      '';
       
       # TODO notifications, power management
       xautolock.enable = true;

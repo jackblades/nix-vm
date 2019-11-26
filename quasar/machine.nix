@@ -4,7 +4,6 @@ with lib;
 let cfg = config.quasar.machine;
 in {
   imports = [
-    # ./machines/dellxpsL502x.nix
     ./machines/skyreach4mini.nix
     ./machines/gpu-passthrough.nix
     ./users.nix
@@ -26,6 +25,8 @@ in {
     quasar.users.enable = true;
     # quasar.gpu-passthrough.enable = true;
     quasar.machines.skyreach4mini.enable = true;
+
+    services.urxvtd.enable = true;
 
     services.logind.lidSwitch = "ignore";
     services.logind.lidSwitchDocked = "ignore";
@@ -50,9 +51,9 @@ in {
     hardware.brightnessctl.enable = true;  # add users to 'video' group
     services.autorandr.enable = true;    
 
-    services.aria2.enable = false;
-    services.aria2.downloadDir = "/home/ajit/aria2";
-    services.aria2.extraArguments = "--max-connection-per-server=16";
+    services.aria2.enable = true;
+    services.aria2.downloadDir = "/run/media/external/quasar/torrentdl";
+    services.aria2.extraArguments = "--connect-timeout=60 --max-connection-per-server=16 --split=16 --min-split-size=1M --human-readable=true --download-result=full --seed-time=none";
     services.aria2.openPorts = true;
     services.aria2.rpcListenPort = 6800;
     # see https://aria2.github.io/manual/en/html/aria2c.html#rpc-auth
@@ -77,22 +78,41 @@ in {
     };
 
     # mpd service
+    # boot.kernelModules = [ "snd-seq" "snd-rawmidi" ];
     services.mpd = {
-      enable = false;
+      enable = true;
+      # TODO authentication if "any"
+      network.listenAddress = "any";  # "127.0.0.1"
+      network.port = 6600;  # 6600
+      startWhenNeeded = true;
       user = "ajit";
       group = "users";
-      musicDirectory = "/run/media/common/_archive/Music";
-      dataDir = "/run/media/common/quasar/mpd";
+      musicDirectory = "/run/media/external/Music";
+      dataDir = "/run/media/external/quasar/mpd";
       extraConfig = ''
         audio_output {
           type    "pulse"
           name    "Local MPD"
-          # server  "127.0.0.1"
-          server  "localhost"
+          server  "127.0.0.1"
+          # server  "localhost"
         }
       '';
     };
-    services.ympd.enable = false;
+    services.ympd.enable = true;
+    services.ympd.webPort = 8080;
+
+    services.plex = {
+      enable = false;
+      user = "ajit";
+      group = "users";
+      dataDir = "/run/media/external/quasar/plex";
+    };
+    # Dashboard > Advanced > SecureConntionMode=Disabled, AutoPortMapping=Disabled
+    services.jellyfin = {
+      enable = true;
+      user = "ajit";
+      group = "users";
+    };
 
     # fonts [ TODO move to home-manager? ]
     fonts = {

@@ -20,3 +20,4 @@ in {
   };
 }
 
+# TODO switch to files in fish-nix-shell if no internet
