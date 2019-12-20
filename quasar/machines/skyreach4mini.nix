@@ -2,6 +2,7 @@
 { lib, config, pkgs, ... }:
 with lib;
 let cfg = config.quasar.machines.skyreach4mini;
+    constants = config.constants;
     fmount-uuid = uuid: fstype: { 
       device = "/dev/disk/by-uuid/${uuid}"; 
       fsType = fstype; 
@@ -14,9 +15,9 @@ in {
 
   config = mkIf cfg.enable {
     # sdc3
-    fileSystems."/run/media/external" = fmount-uuid "A0DEA515DEA4E4AE" "ntfs";
-    fileSystems."/run/media/common" = fmount-uuid "A4C2158AC215623A" "ntfs";
-    # fileSystems."/run/media/win10ltsc" = fmount-uuid "79416EEF4F0AE288" "ntfs"
+    fileSystems."${constants.qsr-user-storage}" = fmount-uuid "A0DEA515DEA4E4AE" "ntfs";
+    fileSystems."${constants.qsr-user-media}/common" = fmount-uuid "A4C2158AC215623A" "ntfs";
+    # fileSystems."${constants.qsr-user-media}/win10ltsc" = fmount-uuid "79416EEF4F0AE288" "ntfs"
       
 
     # sound support

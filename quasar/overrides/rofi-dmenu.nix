@@ -6,7 +6,7 @@ pkgs.stdenv.mkDerivation {
     unpackPhase = "true"; # null src: skip the unpack phase
     installPhase = let dmenu-cmd = ''
         #!/bin/sh
-        ${pkgs.rofi}/bin/rofi -dmenu $@
+        ${pkgs.rofi}/bin/rofi -dmenu -config /etc/rofi/runconfig $@
     ''; in ''
         ${pkgs.coreutils}/bin/mkdir -p $out/bin
         ${pkgs.coreutils}/bin/echo "${dmenu-cmd}" > $out/bin/dmenu

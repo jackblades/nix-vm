@@ -5,13 +5,12 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ./constants.nix
     ./quasar/base.nix
-    # -- post install configuration
     ./quasar/machine.nix
   ];
 
-  # config.quasar.machine.enable = false;  # during install
-  config.quasar.machine.enable = true;
+  config.quasar.machine.enable = true;  # disable during install
 
   # config.boot.plymouth.enable = true;
   # boot.plymouth.logo = ./file.png;

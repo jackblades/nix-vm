@@ -1,7 +1,8 @@
 { lib, pkgs, config, ...}:
 with lib;
 let cfg = config.quasar.xmonad;
-
+    constants = config.constants;
+    compton-kawase-blur = import ../../overrides/compton-kawase-blur.nix pkgs;
 in {
   imports = [];
 
@@ -11,7 +12,7 @@ in {
       description = "xmonad topbar";
       serviceConfig = {
         Restart = "always";
-        ExecStart = "${pkgs.yabar}/bin/yabar -c ${../../home/dotfiles/yabar.config}";
+        ExecStart = "${pkgs.yabar-unstable}/bin/yabar -c ${../../home/dotfiles/yabar.config}";
       };
     };
     systemd.services.quasar-terminal.enable = false;  # trigger from xmonad
@@ -22,8 +23,17 @@ in {
         ExecStart = "${pkgs.terminator}/bin/terminator --hidden";
       };
     };
+    systemd.services.quasar-terminal-kitty.enable = false;  # trigger from xmonad
+    systemd.user.services.quasar-terminal-kitty = {
+      description = "terminal service at F1";
+      serviceConfig = {
+        Restart = "always";
+        # shell opens and toggles terminal (hide), and reports to xmonad on exit
+        ExecStart = "${pkgs.kitty}/bin/kitty --class 'quasar-terminal-kitty' /etc/quasar-terminal-kitty";
+      };
+    };
 
-    systemd.timers."quasar-twominute".enable = false;  # trigger from xmonad
+    systemd.timers."quasar-twominute".enable = true;  # trigger from xmonad
     systemd.user.timers."quasar-twominute" = {
       description = "two minute timer";
       timerConfig = {
@@ -46,16 +56,17 @@ in {
     };
   
     services.compton = {
-      enable = true;
+      enable = false;
       backend = "glx";
 
       shadow = true;
       fade = true;
+      fadeDelta = 2;
 
       shadowExclude = [ "class_g = '.terminator-wrapped'" "name ~= 'Notification'" "name ~= 'yabar$'" "name ~= 'compton'" ];
       fadeExclude = [ "class_g = '.terminator-wrapped'" "_NET_WM_NAME@:s = 'rofi'" "name ~= 'yabar$'" ];
       inactiveOpacity = "0.8";
-      opacityRules = [ "60:window_type = 'dock'" ];
+      opacityRules = [ "60:window_type = 'dock'" "0:window_type = 'desktop'" ];
       settings = {
         no-dnd-shadow = true;
         no-dock-shadow = true;
@@ -93,11 +104,20 @@ in {
 
 
     ## user services
-    systemd.services.quasar-nixlistall.enable = false;  # trigger from xmonad
-    systemd.user.services.quasar-nixlistall = {
-      description = "nix-env -qaP '*' > /tmp/nix-env-qaP";
+    systemd.services.quasar-compton.enable = true;  # trigger from xmonad
+    systemd.user.services.quasar-compton = {
+      description = "compton with kawase blur";
       serviceConfig = {
-        ExecStart = ''/bin/sh -c "${pkgs.nix}/bin/nix-env -qaP '*' > /tmp/nix-env-qaP"'';
+        Environment="DISPLAY=:0";
+        ExecStart = ''${compton-kawase-blur}/bin/compton --config ${../../home/dotfiles/compton.conf}'';
+      };
+    };
+
+    systemd.services.quasar-nixlist-pkgs.enable = false;  # trigger from xmonad
+    systemd.user.services.quasar-nixlist-pkgs = {
+      description = "nix-env -qaP '*' > /tmp/nix-list-pkgs";
+      serviceConfig = {
+        ExecStart = ''/bin/sh -c "${pkgs.nix}/bin/nix-env -qaP '*' > /tmp/nix-list-pkgs"'';
       };
     };
 
@@ -105,7 +125,7 @@ in {
     systemd.user.services.quasar-torrentdl = {
       description = "torrent downloader service";
       serviceConfig = {
-        WorkingDirectory = "/run/media/external/quasar/torrentdl";
+        WorkingDirectory = "${constants.qsr-user-storage-quasar}/torrentdl";
         ExecStart = "/etc/torrentdl";
       };
     };
@@ -113,7 +133,7 @@ in {
     systemd.user.services.quasar-youtubedl = {
       description = "youtube downloader service";
       serviceConfig = {
-        WorkingDirectory = "/run/media/external/quasar/youtubedl";
+        WorkingDirectory = "${constants.qsr-user-storage-quasar}/youtubedl";
         ExecStart = "/etc/youtubedl";
       };
     };

@@ -40,7 +40,7 @@ in {
       description = "lightdm locker service";
       serviceConfig = {
         # Environment = [ "DISPLAY=:0" ];
-        User = "ajit";
+        User = config.constants.qsr-user;
         ExecStart = "${pkgs.lightlocker}/bin/light-locker --no-late-locking --lock-on-suspend";
         Restart = "always";
       };

@@ -1,10 +1,11 @@
 { lib, pkgs, config, ...}:
 with lib;
 let cfg = config.quasar.xmonad;
+    constants = config.constants;
 
     rofi-dmenu = import ../../overrides/rofi-dmenu.nix pkgs;
     
-    usermode = m: c: c // { user = "ajit"; group = "users"; mode = m; };
+    usermode = m: c: c // { user = constants.qsr-user; group = constants.qsr-user-group; mode = m; };
     rx = "555";  # rx is permissions
     rxfile = usermode rx;
     rxtextfile = ftext: usermode rx { text = ftext ; };
@@ -13,6 +14,16 @@ in {
   imports = [];
 
   config.environment.etc = {
+    quasar-terminal-kitty = rxtextfile ''
+      #!/bin/sh
+      
+      # function on_exit --on-process %self
+      #   echo fish is now exiting
+      # end
+      
+      exec ${pkgs.fish}/bin/fish -C "${constants.qsr-user-home}/.xmonad/xmonad-x86_64-linux client terminalToggle"
+    '';
+
     settings-calendar = rxtextfile ''
       #!/bin/sh
       ${pkgs.procps}/bin/pgrep gnome-calendar || ${pkgs.gnome3.gnome-calendar}/bin/gnome-calendar &
@@ -76,13 +87,13 @@ in {
       #!${pkgs.fish}/bin/fish
       # randomize bg from /etc/nixos/quasar/assets/wall
 
-      # (${pkgs.curl}/bin/curl -L "https://source.unsplash.com/random/1366x768" > /tmp/bg2 && ${pkgs.coreutils}/bin/mv /tmp/bg2 /tmp/bg && ${pkgs.feh}/bin/feh --bg-scale /tmp/bg)&
-      # ${pkgs.feh}/bin/feh --randomize --bg-scale /run/media/external/Wallpapers/* &
+      # (${pkgs.curl}/bin/curl -L "https://source.unsplash.com/random/1366x768" > ${constants.qsr-wall-path}2 && ${pkgs.coreutils}/bin/mv ${constants.qsr-wall-path}2 ${constants.qsr-wall-path} && ${pkgs.feh}/bin/feh --bg-scale ${constants.qsr-wall-path})&
+      # ${pkgs.feh}/bin/feh --randomize --bg-scale ${constants.qsr-user-storage-wallpaper}/* &
       
-      ${pkgs.coreutils}/bin/rm /tmp/bg
-      set wallpaper (${pkgs.coreutils}/bin/shuf -n1 -e /run/media/external/Wallpapers/*)
-      ${pkgs.coreutils}/bin/ln -s $wallpaper /tmp/bg
-      ${pkgs.feh}/bin/feh --bg-scale /tmp/bg
+      ${pkgs.coreutils}/bin/rm ${constants.qsr-wall-path}
+      set wallpaper (${pkgs.findutils}/bin/find ${constants.qsr-user-storage-wallpaper}/ | ${pkgs.coreutils}/bin/shuf -n1)
+      ${pkgs.coreutils}/bin/ln -s $wallpaper ${constants.qsr-wall-path}
+      ${pkgs.feh}/bin/feh --bg-scale ${constants.qsr-wall-path}
     '';
 
 
@@ -105,11 +116,14 @@ in {
           
     
     # rofi config
-    "rofi/config" = rxfile {
-      source = /etc/nixos/quasar/home/dotfiles/rofi/config;
+    "rofi/runconfig" = rxfile {
+      source = ../../home/dotfiles/rofi/runconfig;
+    };
+    "rofi/drun.rasi" = rxfile {
+      source = ../../home/dotfiles/rofi/drun.rasi;
     };
     "rofi/nord.rasi" = rxfile {
-      source = /etc/nixos/quasar/home/dotfiles/rofi/nord.rasi;
+      source = ../../home/dotfiles/rofi/nord.rasi;
     };
   };
 }

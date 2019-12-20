@@ -6,12 +6,16 @@ let cfg = config.quasar.fish;
     masenkoPrompt = import ./masenko-prompt.nix { pkgs = pkgs; };
 
     rangerScrollPreview = import ../overrides/ranger.nix pkgs;
+    fsearch = import ../overrides/fsearch.nix pkgs;
 
     ## fish functions
     args = { inherit lib pkgs config; };
     base = import ./functions/base.nix args;
     nix = import ./functions/nix.nix args;
     system = import ./functions/system.nix args;
+    apps = import ./functions/apps.nix args;
+    desktop = import ./functions/desktop.nix args;
+    kitty = import ./functions/kitty.nix args;
     
 in {
   imports = [
@@ -30,11 +34,17 @@ in {
         base.shellAliases 
         nix.shellAliases 
         system.shellAliases 
+        apps.shellAliases 
+        desktop.shellAliases 
+        kitty.shellAliases 
       ];
       shellInit = builtins.concatStringsSep "\n\n" [ 
         base.shellInit 
         nix.shellInit 
         system.shellInit 
+        apps.shellInit 
+        desktop.shellInit 
+        kitty.shellInit 
       ];
     };
 
@@ -44,7 +54,8 @@ in {
       grc
       python36Packages.pygments
 
-      ag
+      ripgrep
+      exa
       aria2
       dtrx
       icdiff  # see csdiff in fish-config/bin, and diff-so-fancy in the gitAndTools package
@@ -57,12 +68,17 @@ in {
 
       fzf
       micro
-      terminator  
+      # terminator  
+      pkgs.kitty
 
       # IDE stuff
       highlight  # for ranger highlighting
       rangerScrollPreview
       
+      mpc_cli
+      ncmpcpp
+      # fsearch
+
       # afuse
       # funion
       # gitfs

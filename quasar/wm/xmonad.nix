@@ -1,6 +1,7 @@
 { lib, pkgs, config, ...}:
 with lib;
 let cfg = config.quasar.xmonad;
+    constants = config.constants;
     rofi-dmenu = import ../overrides/rofi-dmenu.nix pkgs;
     
     lxapp = pkgs.lxappearance.overrideAttrs (old: rec {
@@ -32,12 +33,9 @@ in {
     
     # services.dbus.packages = with pkgs; [ gnome3.dconf ];
 
-    location.latitude = 12.9716;
-    location.longitude = 77.5946;
-
     environment.systemPackages = with pkgs; [
-      bashmount  # WARN
       blueman
+      arandr
       lxapp
       feh
       scrot
@@ -46,7 +44,6 @@ in {
       xcalib
       xtitle
       xorg.xprop
-      yabar-unstable
       
       rofi
       rofi-dmenu
@@ -87,7 +84,8 @@ in {
         systemctl --user start quasar-twominute.timer
         systemctl --user start quasar-wallpaper.service
         systemctl --user start quasar-terminal.service
-        systemctl --user start quasar-nixlistall.service
+        systemctl --user start quasar-terminal-kitty.service
+        systemctl --user start quasar-nixlist-pkgs.service
         # systemctl --user start quasar-torrentdl.service
         # systemctl --user start quasar-youtubedl.service
       '';

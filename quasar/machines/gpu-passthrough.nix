@@ -15,7 +15,7 @@ in {
     boot.blacklistedKernelModules = [ "nvidia" "nouveau" ];
     boot.kernelModules = [ "kvm-amd" "kvm-intel" "vfio_virqfd" "vfio_pci" "vfio_iommu_type1" "vfio" ];
     # generated from ./list_iommu.sh
-    boot.extraModprobeConfig = "options vfio-pci ids=10de:1f07,10de:10f9,10de:1ada,10de:1adb";
+    boot.extraModprobeConfig = "options vfio-pci ids=${constants.gpu-iommu-ids}";
   
     virtualisation = {
       libvirtd = {
@@ -26,7 +26,7 @@ in {
           namespaces = []
 
           # audio
-          user = "ajit"
+          user = ${constants.qsr-user}
         '';
       };
     };

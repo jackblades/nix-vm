@@ -3,9 +3,9 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-
+let constants = config.constants; in
 { # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "19.09";  
+  system.stateVersion = constants.state-version;  
   
   # virtualisation.virtualbox.guest.enable = true;
   
@@ -21,7 +21,7 @@
   # Use the GRUB 2 boot loader.
   # boot.loader.grub.enable = true;
   # boot.loader.grub.version = 2;
-  boot.loader.grub.device = "/dev/sdb";
+  boot.loader.grub.device = constants.boot-device;
   boot.loader.grub.useOSProber = true;
   boot.cleanTmpDir = true;
   
@@ -41,15 +41,15 @@
   # hardware.nvidiaOptimus.disable = true;
   
   # timezone
-  time.timeZone = "Asia/Calcutta";
+  time.timeZone = constants.timezone;
 
   # tty console
-  i18n.consoleFont = "Droid Sans, FontAwesome Bold 9";
+  i18n.consoleFont = constants.console-font;
   i18n.consoleKeyMap = "us";
   i18n.defaultLocale = "en_US.UTF-8";
 
   # networking
-  networking.hostName = "quasar";
+  networking.hostName = constants.hostname;
   networking.networkmanager.enable = true;
   networking.enableIPv6 = false;
   networking.firewall.enable = false;  
@@ -74,20 +74,29 @@
   # default packages
   environment.systemPackages = with pkgs; [
     nix
+    gitAndTools.gitFull
     # linuxPackages.bbswitch
     
+    hardinfo
     binutils
-    gitAndTools.gitFull
-    gcc
     htop
-    manpages
+    powertop
+    iotop
     pciutils
+    utillinux
+    
+    gcc
+    manpages
+    
     python2
     python3
     rsync
     sudo
-    utillinux
     which
     wget
   ];
+
+  nix.gc.automatic = true;
+  nix.gc.options = "--delete-older-than 1d";
+  # nix.gc.dates = "03:15";
 }

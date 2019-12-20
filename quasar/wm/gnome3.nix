@@ -1,6 +1,7 @@
 { lib, pkgs, config, ...}:
 with lib;
 let cfg = config.quasar.gnome3;
+    constants = config.constants;
 in {
   imports = [
     

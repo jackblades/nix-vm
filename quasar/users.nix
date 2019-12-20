@@ -2,6 +2,8 @@
 { lib, pkgs, config, ...}:
 with lib;
 let cfg = config.quasar.users;
+    constants = config.constants;
+    xterminator = import ./overrides/xterminator.nix { inherit lib pkgs; };
     wpsoffice6567 = import ./overrides/wpsoffice6567.nix { pkgs = pkgs; };
     vscodeCustom = import ./overrides/vscode.nix { pkgs = pkgs; };
     yEd319 = import ./overrides/yEd.nix pkgs;
@@ -26,31 +28,32 @@ in {
     quasar.gnome3.enable = false;
     quasar.home.manager.enable = true;
 
-    users.extraUsers.ajit = {
-      name = "ajit";
-      description = "Ajit Singh";    
+    users.extraUsers."${constants.qsr-user}" = {
+      name = constants.qsr-user;
+      description = constants.qsr-user-name;    
       isNormalUser = true;
 
       uid = 1000;
-      group = "users";
-      home = "/home/ajit";
+      group = constants.qsr-user-group;
+      home = constants.qsr-user-home;
 
-      shell = "${pkgs.fish}/bin/fish";
-      createHome = true;
-      extraGroups = [ "audio" "video" "disk" "wheel" "mlocate" "mpd" "aria2" "docker" "libvirtd" ];
+      shell = constants.qsr-user-shell;
+      createHome = constants.qsr-user-createHome;
+      # cat /etc/group
+      extraGroups = [ "audio" "video" "disk" "networkmanager" "wheel" "mlocate" "mpd" "docker" "libvirtd" ];
 
-      # openssh.authorizedKeys.keys = [ "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDoEMEdWQpZe2ZK48JFFGUb4sSU/cLrUZjr6RuX3XMlU9BIeJ9FCNzTZVmfK3Rwy9x/mfmS/MngTE/DP0JmP25sZdETx8QFWlwkC6lyuydFIKk93chz8ZmXHlKR7NCjgGru8PvxMX1RWnD6+hcKqqpAijoeCO0PchJjVUKOjcz9UGJLaqDzGBV8KmGH2wVA1KRHPUw7OxHasckY1frpwO8ENfHjSu1TiEFDKGwlkOc7LOBxj0LSbzka5S9Wdij67xCTQUmp2S/lWrS6yogX4TPTyZIElUReAe4tkmujwMOmlq5cwT1kx62whMf1WnfGq0yiH7Ch95C/XIe0PgjZXbL3 ajit@ajit-Latitude-E7240" ];
+      # openssh.authorizedKeys.keys = constants.qsr-authorized-keys;
     };
 
     # installed applications
     environment.systemPackages = with pkgs; [
-      hardinfo
 
       home-manager
       vscode
       firefox
-
-      vlc
+      
+      # vlc
+      mpv
       wpsoffice6567
       # yEd319
 

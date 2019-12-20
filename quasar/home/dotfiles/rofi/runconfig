@@ -1,0 +1,24 @@
+rofi.show-icons:            true
+rofi.drun-icon-theme:       Paper
+rofi.modi:                  drun,window,ssh
+rofi.line-padding:          10
+rofi.matching:              fuzzy
+rofi.bw:                    0
+rofi.separator-style:       none
+rofi.hide-scrollbar:        true
+rofi.line-margin:           0
+rofi.font:                  Noto Sans 12
+rofi.sidebar-mode:          true
+rofi.padding:               10
+# rofi.terminal:            urxvt
+rofi.case-sensitive:        false
+# rofi.theme:                 /home/ajit/nixos/quasar/home/dotfiles/rofi/drun.rasi
+rofi.theme:                 /etc/rofi/drun.rasi
+
+
+# rofi.color-enabled: true
+# rofi.color-window: #aa32302f, #aa32302f, #0032302f
+# rofi.color-normal: #0032302f, #d8dee9, #0032302f, #cc458588, #32302f
+# rofi.color-active: #4d1b2b34, #6699cc, #4d343d46, #4d6699cc, #d8dee9
+# rofi.color-urgent: #4d1b2b34, #ec5f67, #4d343d46, #4dec5f67, #d8dee9
+

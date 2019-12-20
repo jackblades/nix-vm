@@ -1,7 +1,7 @@
 { lib, pkgs, config, ...}:
 with lib;
 let cfg = config.quasar.xautolock;
-    
+    constants = config.constants;
 in {
   options.quasar.xautolock = {
     enable = mkEnableOption "quasar autolock service";
@@ -9,14 +9,14 @@ in {
 
   config = mkIf cfg.enable {
     environment.etc.quasar = {
-      user = "ajit";
-      group = "users";
+      user = constants.qsr-user;
+      group = constants.qsr-user-group;
       source = /etc/nixos/quasar/assets;
     };
 
     environment.etc.xautolock-locker = {
-      user = "ajit";
-      group = "users";
+      user = constants.qsr-user;
+      group = constants.qsr-user-group;
       mode = "555";
       text = ''
         #!${pkgs.fish}/bin/fish
@@ -35,7 +35,7 @@ in {
           pgrep i3lock-color
           or ${pkgs.i3lock-color}/bin/i3lock-color --nofork \
             --ignore-empty-password \
-            --image=/tmp/bg \
+            --image=${constants.qsr-wall-path} \
             --clock \
             --noinputtext="////////" \
             --verifcolor=0892D0aa \
@@ -52,7 +52,7 @@ in {
 
           # lower left ring indicator
           # pkill -u $USER -USR1 dunst
-          # i3lock-color --indicator -n -i /tmp/bg \
+          # i3lock-color --indicator -n -i ${constants.qsr-wall-path} \
           #   --insidecolor=373445ff --ringcolor=ffffffff --line-uses-inside \
           #   --keyhlcolor=d23c3dff --bshlcolor=d23c3dff --separatorcolor=00000000 \
           #   --insidevercolor=fecf4dff --insidewrongcolor=d23c3dff \
@@ -63,8 +63,8 @@ in {
         '';
     };
     environment.etc.xautolock-suspend = {
-      user = "ajit";
-      group = "users";
+      user = constants.qsr-user;
+      group = constants.qsr-user-group;
       mode = "555";
       text = ''
         #!/bin/sh
@@ -88,7 +88,7 @@ in {
     services.xserver = {
       # use the session lock to login
       displayManager.auto.enable = true;
-      displayManager.auto.user = "ajit";
+      displayManager.auto.user = constants.qsr-user;
       
       # TODO notifications, power management
       xautolock.enable = true;
@@ -103,7 +103,7 @@ in {
     systemd.user.services.xlocksuspend = {
       description = "i3lock on suspend";
       serviceConfig = {
-        User = "ajit";
+        User = constants.qsr-user;
         Type = "oneshot";
         ExecStart = "/etc/xautolock-locker";
       };
