@@ -90,7 +90,7 @@ in {
       # (${pkgs.curl}/bin/curl -L "https://source.unsplash.com/random/1366x768" > ${constants.qsr-wall-path}2 && ${pkgs.coreutils}/bin/mv ${constants.qsr-wall-path}2 ${constants.qsr-wall-path} && ${pkgs.feh}/bin/feh --bg-scale ${constants.qsr-wall-path})&
       # ${pkgs.feh}/bin/feh --randomize --bg-scale ${constants.qsr-user-storage-wallpaper}/* &
       
-      ${pkgs.coreutils}/bin/rm ${constants.qsr-wall-path}
+      ${pkgs.coreutils}/bin/rm ${constants.qsr-wall-path}; or true
       set wallpaper (${pkgs.findutils}/bin/find ${constants.qsr-user-storage-wallpaper}/ | ${pkgs.coreutils}/bin/shuf -n1)
       ${pkgs.coreutils}/bin/ln -s $wallpaper ${constants.qsr-wall-path}
       ${pkgs.feh}/bin/feh --bg-scale ${constants.qsr-wall-path}

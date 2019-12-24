@@ -51,6 +51,9 @@ let constants = config.constants; in
   # networking
   networking.hostName = constants.hostname;
   networking.networkmanager.enable = true;
+  # TODO BUG ipv6 may still be enabled
+    # use sudo sysctl -w net.ipv6.conf.wlo1.disable_ipv6=1
+    # boot.kernel.sysctl."net.ipv6.conf.wlo1.disable_ipv6" = true
   networking.enableIPv6 = false;
   networking.firewall.enable = false;  
   # networking.iwd-nm.enable = true;
@@ -97,6 +100,6 @@ let constants = config.constants; in
   ];
 
   nix.gc.automatic = true;
-  nix.gc.options = "--delete-older-than 1d";
+  nix.gc.options = "--delete-older-than 7d";
   # nix.gc.dates = "03:15";
 }
