@@ -69,7 +69,7 @@ in {
       text = ''
         #!/bin/sh
 
-        (${pkgs.pulseaudio}/bin/pacmd list-sink-inputs | ${pkgs.gnugrep}/bin/grep 'state: RUNNING') || ${pkgs.systemd}/bin/systemctl suspend
+        (${pkgs.pulseaudio}/bin/pacmd list-sink-inputs | ${pkgs.gnugrep}/bin/grep -q 'state: RUNNING') || ${pkgs.systemd}/bin/systemctl suspend
         '';
     };
 

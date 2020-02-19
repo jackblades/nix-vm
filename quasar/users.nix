@@ -49,7 +49,7 @@ in {
     environment.systemPackages = with pkgs; [
 
       home-manager
-      vscode
+      vscodeCustom
       firefox
       
       # vlc

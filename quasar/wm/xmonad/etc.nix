@@ -83,6 +83,11 @@ in {
     '';
 
     # utility
+    rofi-locate = rxtextfile ''
+      #!${pkgs.fish}/bin/fish
+      open (${pkgs.mlocate}/bin/locate -i "" | ${pkgs.rofi-unwrapped}/bin/rofi -dmenu -i -theme ${pkgs.rofi-unwrapped}/share/rofi/themes/Arc-Dark.rasi)
+    '';
+
     set-wall-random = rxtextfile ''
       #!${pkgs.fish}/bin/fish
       # randomize bg from /etc/nixos/quasar/assets/wall

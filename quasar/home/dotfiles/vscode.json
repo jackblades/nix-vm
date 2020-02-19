@@ -1,0 +1,9 @@
+{
+    "window.zoomLevel": 1,
+    "explorer.confirmDragAndDrop": false,
+    "editor.minimap.enabled": false,
+    "explorer.confirmDelete": false,
+    "workbench.colorTheme": "Quiet Light",
+    "window.menuBarVisibility": "default",
+    "editor.wordWrap": "on"
+}

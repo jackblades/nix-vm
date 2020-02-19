@@ -46,8 +46,10 @@ in {
     };
 
     # user services
+    programs.ssh.askPassword = "";
     programs.gnupg.agent.enable = true;
     programs.gnupg.dirmngr.enable = true;
+    programs.gnupg.agent.enableSSHSupport = true;
 
     hardware.brightnessctl.enable = true;  # add users to 'video' group
     services.autorandr.enable = true;    
